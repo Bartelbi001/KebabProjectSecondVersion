@@ -4,7 +4,8 @@ namespace KebabStoreGen2.API.KebabStoreGen2.Core.Models;
 
 public class Kebab
 {
-    public const int MAX_NAME_LENGTH = 100;
+    public const int MAX_NAME_LENGTH = 32;
+    public const int MAX_DESCRIPTION_LENGTH = 100;
 
     private Kebab(Guid id, string name, string description, decimal price, Image? titleImage)
     {
@@ -28,7 +29,7 @@ public class Kebab
             return Result.Failure<Kebab>($"'{nameof(name)}' can't be null or empty");
         }
 
-        if (string.IsNullOrEmpty(description) || description.Length > MAX_NAME_LENGTH)
+        if (string.IsNullOrEmpty(description) || description.Length > MAX_DESCRIPTION_LENGTH)
         {
             return Result.Failure<Kebab>($"'{nameof(description)}' can't be null or empty");
         }
