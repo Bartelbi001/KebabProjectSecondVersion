@@ -30,10 +30,10 @@ public class KebabRepository : IKebabsRepository
             .ToListAsync();
 
         var kebabs = kebabsEntities
-            .Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, ))
-            //.Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, Image.Create(k.TitleImagePath)))
+            .Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, k.TitleImage))
             .ToList();
-        throw new NotImplementedException();
+
+        return kebabs;
     }
 
     public Task<Guid> Update(Guid id, string name, string description, decimal price)
