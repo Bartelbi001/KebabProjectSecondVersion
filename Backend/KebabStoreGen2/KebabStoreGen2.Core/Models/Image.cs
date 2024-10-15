@@ -27,6 +27,7 @@ public class Image
         }
 
         var image = new Image(fileName, path);
+
         return Result.Success<Image>(image);
     }
 }
