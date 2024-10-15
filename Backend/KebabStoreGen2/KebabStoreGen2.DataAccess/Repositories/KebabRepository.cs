@@ -67,6 +67,7 @@ public class KebabRepository : IKebabsRepository
             .Select(k =>
             {
                 var titleImage = !string.IsNullOrEmpty(k.TitleImagePath) ? Image.Create(Path.GetFileName(k.TitleImagePath), k.TitleImagePath).Value : null;
+
                 return Kebab.Create(k.Id, k.Name, k.Description, k.Price, titleImage).Value;
             })
             .ToList();
@@ -90,6 +91,7 @@ public class KebabRepository : IKebabsRepository
     public async Task<Guid> Update(Guid id, string name, string description, decimal price, string? titleImagePath = null)
     {
         var kebab = await _context.KebabEntities.FindAsync(id);
+
         if (kebab == null)
         {
             throw new KeyNotFoundException("Kebab not found");
