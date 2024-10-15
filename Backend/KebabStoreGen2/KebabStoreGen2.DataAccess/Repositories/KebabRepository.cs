@@ -15,7 +15,7 @@ public class KebabRepository : IKebabsRepository
 
     public Task<Guid> Create(Kebab kebab)
     {
-
+        throw new NotImplementedException();
     }
 
     public Task<Guid> Delete(Guid id)
@@ -31,7 +31,9 @@ public class KebabRepository : IKebabsRepository
 
         var kebabs = kebabsEntities
             .Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, ))
+            //.Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, Image.Create(k.TitleImagePath)))
             .ToList();
+        throw new NotImplementedException();
     }
 
     public Task<Guid> Update(Guid id, string name, string description, decimal price)
