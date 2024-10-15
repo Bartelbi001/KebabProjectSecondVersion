@@ -1,5 +1,6 @@
 ﻿using KebabStoreGen2.API.KebabStoreGen2.Core.Models;
 using KebabStoreGen2.Core.Abstractions;
+using KebabStoreGen2.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace KebabStoreGen2.DataAccess.Repositories;
@@ -13,14 +14,30 @@ public class KebabRepository : IKebabsRepository
         _context = context;
     }
 
-    public Task<Guid> Create(Kebab kebab)
+    public async Task<Guid> Create(Kebab kebab)
     {
-        throw new NotImplementedException();
+        var kebabEntity = new KebabEntity
+        {
+            Id = kebab.Id,
+            Name = kebab.Name,
+            Description = kebab.Description,
+            Price = kebab.Price,
+            TitleImage = kebab.TitleImage
+        };
+
+        await _context.AddAsync(kebabEntity);
+        await _context.SaveChangesAsync();
+
+        return kebabEntity.Id;
     }
 
-    public Task<Guid> Delete(Guid id)
+    public async Task<Guid> Delete(Guid id)
     {
-        throw new NotImplementedException();
+        await _context.KebabEntities
+            .Where(k => k.Id == id)
+            .ExecuteDeleteAsync();
+
+        return id;
     }
 
     public async Task<List<Kebab>> Get()
@@ -30,14 +47,21 @@ public class KebabRepository : IKebabsRepository
             .ToListAsync();
 
         var kebabs = kebabsEntities
-            .Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, k.TitleImage))
+            .Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, k.TitleImage).Value)
             .ToList();
 
         return kebabs;
     }
 
-    public Task<Guid> Update(Guid id, string name, string description, decimal price)
+    public async Task<Guid> Update(Guid id, string name, string description, decimal price)
     {
-        throw new NotImplementedException();
+        await _context.KebabEntities
+            .Where(k => k.Id == id)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(k => k.Name, name)
+                .SetProperty(k => k.Description, description)
+                .SetProperty(k => k.Price, price));
+
+        return id;
     }
 }
