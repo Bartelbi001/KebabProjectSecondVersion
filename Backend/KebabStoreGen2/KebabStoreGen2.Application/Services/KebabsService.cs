@@ -27,8 +27,13 @@ public class KebabsService : IKebabService
         return await _kebabsRepository.Get();
     }
 
-    public async Task<Guid> UpdateKebab(Guid id, string name, string description, decimal price)
+    public async Task<Guid> UpdateKebab(Guid id, string name, string description, decimal price, string? titleImagePath = null)
     {
-        return await _kebabsRepository.Update(id, name, description, price);
+        return await _kebabsRepository.Update(id, name, description, price, titleImagePath);
     }
+
+    //public async Task<Guid> UpdateKebab(Guid id, string name, string description, decimal price)
+    //{
+    //    return await _kebabsRepository.Update(id, name, description, price);
+    //}
 }

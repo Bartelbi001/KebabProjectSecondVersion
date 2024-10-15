@@ -13,11 +13,14 @@ public class ImagesService
         {
             var fileName = Path.GetFileName(titleImage.FileName);
             var filePath = Path.Combine(path, fileName);
+
             await using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await titleImage.CopyToAsync(stream);
             }
+
             var image = Image.Create(fileName, filePath);
+
             return image;
         }
         catch (Exception ex)
