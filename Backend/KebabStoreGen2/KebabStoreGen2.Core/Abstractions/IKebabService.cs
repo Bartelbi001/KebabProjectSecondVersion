@@ -7,5 +7,5 @@ public interface IKebabService
     Task<Guid> CreateKebab(Kebab kebab);
     Task<Guid> DeleteKebab(Guid id);
     Task<List<Kebab>> GetAllKebabs();
-    Task<Kebab> UpdateKebab(Guid id, string name, string description, decimal price);
+    Task<Guid> UpdateKebab(Guid id, string name, string description, decimal price);
 }
