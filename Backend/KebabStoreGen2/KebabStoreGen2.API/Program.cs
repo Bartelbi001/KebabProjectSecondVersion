@@ -25,6 +25,7 @@ namespace KebabStoreGen2.API
 
             builder.Services.AddScoped<IKebabService, KebabsService>();
             builder.Services.AddScoped<IKebabsRepository, KebabRepository>();
+            builder.Services.AddScoped<IImageService, ImagesService>();
 
             var app = builder.Build();
 
