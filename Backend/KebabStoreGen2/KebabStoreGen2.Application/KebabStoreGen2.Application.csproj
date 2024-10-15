@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KebabStoreGen2.Core\KebabStoreGen2.Core.csproj" />
+    <ProjectReference Include="..\KebabStoreGen2.DataAccess\KebabStoreGen2.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

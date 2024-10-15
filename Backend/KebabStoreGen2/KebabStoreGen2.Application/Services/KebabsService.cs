@@ -5,23 +5,30 @@ namespace KebabStoreGen2.Application.Services;
 
 public class KebabsService : IKebabService
 {
-    public Task<Guid> CreateKebab(Kebab kebab)
+    private readonly IKebabsRepository _kebabsRepository;
+
+    public KebabsService(IKebabsRepository kebabsRepository)
     {
-        throw new NotImplementedException();
+        _kebabsRepository = kebabsRepository;
     }
 
-    public Task<Guid> DeleteKebab(Guid id)
+    public async Task<Guid> CreateKebab(Kebab kebab)
     {
-        throw new NotImplementedException();
+        return await _kebabsRepository.Create(kebab);
     }
 
-    public Task<List<Kebab>> GetAllKebabs()
+    public async Task<Guid> DeleteKebab(Guid id)
     {
-        throw new NotImplementedException();
+        return await _kebabsRepository.Delete(id);
     }
 
-    public Task<Kebab> UpdateKebab(Guid id, string name, string description, decimal price)
+    public async Task<List<Kebab>> GetAllKebabs()
     {
-        throw new NotImplementedException();
+        return await _kebabsRepository.Get();
+    }
+
+    public async Task<Guid> UpdateKebab(Guid id, string name, string description, decimal price)
+    {
+        return await _kebabsRepository.Update(id, name, description, price);
     }
 }
