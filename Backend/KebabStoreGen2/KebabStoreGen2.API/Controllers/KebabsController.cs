@@ -24,31 +24,21 @@ public class KebabsController : ControllerBase
     public ImagesService ImagesService { get; }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> CreateKebab([FromBody] KebabsRequest request)
+    public async Task<ActionResult<Guid>> CreateKebab([FromForm] KebabsRequest request)
     {
-        var imageResult = await _imagesService.CreateImage(
-            request.TitleImage,
-            _staticFilesPath);
-
+        var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
         if (imageResult.IsFailure)
         {
             return BadRequest(imageResult.Error);
         }
 
-        var kebabResult = Kebab.Create(
-            Guid.NewGuid(),
-            request.Name,
-            request.Description,
-            request.Price,
-            imageResult.Value);
-
+        var kebabResult = Kebab.Create(Guid.NewGuid(), request.Name, request.Description, request.Price, imageResult.Value);
         if (kebabResult.IsFailure)
         {
-            return BadRequest(imageResult.Error);
+            return BadRequest(kebabResult.Error);
         }
 
         var kebabId = await _kebabsService.CreateKebab(kebabResult.Value);
-
         return Ok(kebabId);
     }
 
@@ -60,5 +50,24 @@ public class KebabsController : ControllerBase
         var response = kebabs.Select(k => new KebabsResponse(k.Id, k.Name, k.Description, k.Price, k.TitleImage.Path));
 
         return Ok(response);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<Guid>> UpdateKebab(Guid id, [FromForm] KebabsRequest request)
+    {
+        var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
+        if (imageResult.IsFailure)
+        {
+            return BadRequest(imageResult.Error);
+        }
+
+        var kebabId = await _kebabsService.UpdateKebab(id, request.Name, request.Description, request.Price, imageResult.Value.Path);
+        return Ok(kebabId);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult<Guid>> KebabDelete(Guid id)
+    {
+        return Ok(await _kebabsService.DeleteKebab(id));
     }
 }
