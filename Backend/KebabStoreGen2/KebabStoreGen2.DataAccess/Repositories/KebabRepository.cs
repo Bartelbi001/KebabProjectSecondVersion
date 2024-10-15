@@ -87,15 +87,31 @@ public class KebabRepository : IKebabsRepository
     //    return kebabs;
     //}
 
-    public async Task<Guid> Update(Guid id, string name, string description, decimal price)
+    public async Task<Guid> Update(Guid id, string name, string description, decimal price, string? titleImagePath = null)
     {
-        await _context.KebabEntities
+        var updateQuery = _context.KebabEntities
             .Where(k => k.Id == id)
-            .ExecuteUpdateAsync(s => s
-                .SetProperty(k => k.Name, name)
-                .SetProperty(k => k.Description, description)
-                .SetProperty(k => k.Price, price));
+            .Select(k => new { k.Name, k.Description, k.Price, k.TitleImagePath });
+
+        await updateQuery.ExecuteUpdateAsync(s => s
+            .SetProperty(k => k.Name, name)
+            .SetProperty(k => k.Description, description)
+            .SetProperty(k => k.Price, price)
+            .SetProperty(k => k.TitleImagePath, titleImagePath ?? s.CurrentValues.TitleImagePath)); // Обновление пути к изображению при необходимости
 
         return id;
     }
+
+
+    //public async Task<Guid> Update(Guid id, string name, string description, decimal price)
+    //{
+    //    await _context.KebabEntities
+    //        .Where(k => k.Id == id)
+    //        .ExecuteUpdateAsync(s => s
+    //            .SetProperty(k => k.Name, name)
+    //            .SetProperty(k => k.Description, description)
+    //            .SetProperty(k => k.Price, price));
+
+    //    return id;
+    //}
 }
