@@ -89,18 +89,27 @@ public class KebabRepository : IKebabsRepository
 
     public async Task<Guid> Update(Guid id, string name, string description, decimal price, string? titleImagePath = null)
     {
-        var updateQuery = _context.KebabEntities
-            .Where(k => k.Id == id)
-            .Select(k => new { k.Name, k.Description, k.Price, k.TitleImagePath });
+        var kebab = await _context.KebabEntities.FindAsync(id);
+        if (kebab == null)
+        {
+            throw new KeyNotFoundException("Kebab not found");
+        }
 
-        await updateQuery.ExecuteUpdateAsync(s => s
-            .SetProperty(k => k.Name, name)
-            .SetProperty(k => k.Description, description)
-            .SetProperty(k => k.Price, price)
-            .SetProperty(k => k.TitleImagePath, titleImagePath ?? s.CurrentValues.TitleImagePath)); // Обновление пути к изображению при необходимости
+        kebab.Name = name;
+        kebab.Description = description;
+        kebab.Price = price;
+
+        if (!string.IsNullOrEmpty(titleImagePath))
+        {
+            kebab.TitleImagePath = titleImagePath;
+        }
+
+        _context.KebabEntities.Update(kebab);
+        await _context.SaveChangesAsync();
 
         return id;
     }
+
 
 
     //public async Task<Guid> Update(Guid id, string name, string description, decimal price)
