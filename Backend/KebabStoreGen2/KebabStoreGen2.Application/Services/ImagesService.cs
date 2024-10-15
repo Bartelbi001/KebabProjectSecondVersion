@@ -1,11 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
 using KebabStoreGen2.API.KebabStoreGen2.Core.Models;
+using KebabStoreGen2.Core.Abstractions;
 using Microsoft.AspNetCore.Http;
-
 
 namespace KebabStoreGen2.Application.Services;
 
-public class ImagesService
+public class ImagesService : IImageService
 {
     public async Task<Result<Image>> CreateImage(IFormFile titleImage, string path)
     {
