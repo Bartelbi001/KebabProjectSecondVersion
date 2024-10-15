@@ -24,22 +24,41 @@ public class KebabsController : ControllerBase
     public ImagesService ImagesService { get; }
 
     [HttpPost]
-    public async Task<ActionResult> CreateKebab(KebabsRequest request)
+    public async Task<ActionResult<Guid>> CreateKebab([FromBody] KebabsRequest request)
     {
-        var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
+        var imageResult = await _imagesService.CreateImage(
+            request.TitleImage,
+            _staticFilesPath);
 
         if (imageResult.IsFailure)
         {
             return BadRequest(imageResult.Error);
         }
 
-        var kebab = Kebab.Create(Guid.NewGuid(), request.Name, request.Description, request.Price, imageResult.Value);
+        var kebabResult = Kebab.Create(
+            Guid.NewGuid(),
+            request.Name,
+            request.Description,
+            request.Price,
+            imageResult.Value);
 
-        if (kebab.IsFailure)
+        if (kebabResult.IsFailure)
         {
             return BadRequest(imageResult.Error);
         }
 
-        return Ok(kebab);
+        var kebabId = await _kebabsService.CreateKebab(kebabResult.Value);
+
+        return Ok(kebabId);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<Kebab>>> GetAllKebabs()
+    {
+        var kebabs = await _kebabsService.GetAllKebabs();
+
+        var response = kebabs.Select(k => new KebabsResponse(k.Id, k.Name, k.Description, k.Price, k.TitleImage.Path));
+
+        return Ok(response);
     }
 }
