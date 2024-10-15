@@ -22,7 +22,7 @@ public class KebabRepository : IKebabsRepository
             Name = kebab.Name,
             Description = kebab.Description,
             Price = kebab.Price,
-            TitleImage = kebab.TitleImage
+            TitleImagePath = kebab.TitleImage?.Path // Используем Path для хранения пути
         };
 
         await _context.AddAsync(kebabEntity);
@@ -30,6 +30,23 @@ public class KebabRepository : IKebabsRepository
 
         return kebabEntity.Id;
     }
+
+    //public async Task<Guid> Create(Kebab kebab)
+    //{
+    //    var kebabEntity = new KebabEntity
+    //    {
+    //        Id = kebab.Id,
+    //        Name = kebab.Name,
+    //        Description = kebab.Description,
+    //        Price = kebab.Price,
+    //        TitleImage = kebab.TitleImage
+    //    };
+
+    //    await _context.AddAsync(kebabEntity);
+    //    await _context.SaveChangesAsync();
+
+    //    return kebabEntity.Id;
+    //}
 
     public async Task<Guid> Delete(Guid id)
     {
@@ -47,11 +64,28 @@ public class KebabRepository : IKebabsRepository
             .ToListAsync();
 
         var kebabs = kebabsEntities
-            .Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, k.TitleImage).Value)
+            .Select(k =>
+            {
+                var titleImage = !string.IsNullOrEmpty(k.TitleImagePath) ? Image.Create(Path.GetFileName(k.TitleImagePath), k.TitleImagePath).Value : null;
+                return Kebab.Create(k.Id, k.Name, k.Description, k.Price, titleImage).Value;
+            })
             .ToList();
 
         return kebabs;
     }
+
+    //public async Task<List<Kebab>> Get()
+    //{
+    //    var kebabsEntities = await _context.KebabEntities
+    //        .AsNoTracking()
+    //        .ToListAsync();
+
+    //    var kebabs = kebabsEntities
+    //        .Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, k.TitleImage).Value)
+    //        .ToList();
+
+    //    return kebabs;
+    //}
 
     public async Task<Guid> Update(Guid id, string name, string description, decimal price)
     {
