@@ -1,4 +1,10 @@
 
+using KebabStoreGen2.Application.Services;
+using KebabStoreGen2.Core.Abstractions;
+using KebabStoreGen2.DataAccess;
+using KebabStoreGen2.DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 namespace KebabStoreGen2.API
 {
     public class Program
@@ -7,16 +13,21 @@ namespace KebabStoreGen2.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<KebabStoreGen2DbContext>(
+                options =>
+                {
+                    options.UseSqlServer(builder.Configuration.GetConnectionString(nameof(KebabStoreGen2DbContext)));
+                });
+
+            builder.Services.AddScoped<IKebabService, KebabsService>();
+            builder.Services.AddScoped<IKebabsRepository, KebabRepository>();
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
