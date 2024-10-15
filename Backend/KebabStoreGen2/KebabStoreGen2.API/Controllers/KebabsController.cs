@@ -47,6 +47,11 @@ public class KebabsController : ControllerBase
     {
         var kebabs = await _kebabsService.GetAllKebabs();
 
+        if (kebabs == null || !kebabs.Any())
+        {
+            return Ok(new List<KebabsResponse>()); // Возвращаем пустой список
+        }
+
         var response = kebabs.Select(k => new KebabsResponse(k.Id, k.Name, k.Description, k.Price, k.TitleImage.Path));
 
         return Ok(response);
