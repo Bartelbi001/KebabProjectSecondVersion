@@ -24,59 +24,109 @@ public class KebabsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateKebab([FromForm] KebabsRequest request)
     {
-        var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
-        if (imageResult.IsFailure)
+        try
         {
-            return BadRequest(imageResult.Error);
-        }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        var kebabResult = Kebab.Create(Guid.NewGuid(), request.Name, request.Description, request.Price, imageResult.Value);
-        if (kebabResult.IsFailure)
+            var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
+            if (imageResult.IsFailure)
+            {
+                return BadRequest(imageResult.Error);
+            }
+
+            var kebabResult = Kebab.Create(Guid.NewGuid(), request.Name, request.Description, request.Price, imageResult.Value);
+            if (kebabResult.IsFailure)
+            {
+                return BadRequest(kebabResult.Error);
+            }
+
+            var kebabId = await _kebabService.CreateKebab(kebabResult.Value);
+
+            return Ok(kebabId);
+        }
+        catch (Exception ex)
         {
-            return BadRequest(kebabResult.Error);
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-
-        var kebabId = await _kebabService.CreateKebab(kebabResult.Value);
-        return Ok(kebabId);
     }
 
     [HttpGet]
     public async Task<ActionResult<List<KebabsResponse>>> GetAllKebabs()
     {
-        var kebabs = await _kebabService.GetAllKebabs();
-        if (kebabs == null || !kebabs.Any())
+        try
         {
-            return Ok(new List<KebabsResponse>()); // Возвращаем пустой список
+            var kebabs = await _kebabService.GetAllKebabs();
+            if (kebabs == null || !kebabs.Any())
+            {
+                return Ok(new List<KebabsResponse>()); // Возвращаем пустой список
+            }
+
+            var response = kebabs.Select(k => new KebabsResponse(
+                k.Id,
+                k.Name,
+                k.Description,
+                k.Price,
+                k.TitleImage != null ? k.TitleImage.Path : string.Empty // Проверка на null
+            )).ToList();
+
+            return Ok(response);
         }
-
-        var response = kebabs.Select(k => new KebabsResponse(
-            k.Id,
-            k.Name,
-            k.Description,
-            k.Price,
-            k.TitleImage != null ? k.TitleImage.Path : string.Empty // Проверка на null
-        )).ToList();
-
-        return Ok(response);
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<Guid>> UpdateKebab(Guid id, [FromForm] KebabsRequest request)
     {
-        var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
-        if (imageResult.IsFailure)
+        try
         {
-            return BadRequest(imageResult.Error);
-        }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        var kebabId = await _kebabService.UpdateKebab(id, request.Name, request.Description, request.Price, imageResult.Value.Path);
-        return Ok(kebabId);
+            var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
+            if (imageResult.IsFailure)
+            {
+                return BadRequest(imageResult.Error);
+            }
+
+            var kebabId = await _kebabService.UpdateKebab(id, request.Name, request.Description, request.Price, imageResult.Value.Path);
+
+            return Ok(kebabId);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound("Kebab not found");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult<Guid>> KebabDelete(Guid id)
     {
-        return Ok(await _kebabService.DeleteKebab(id));
+        try
+        {
+            var result = await _kebabService.DeleteKebab(id);
+
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound("Kebab not found");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 }
