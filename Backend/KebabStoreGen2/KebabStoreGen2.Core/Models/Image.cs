@@ -4,7 +4,7 @@ namespace KebabStoreGen2.API.KebabStoreGen2.Core.Models;
 
 public class Image
 {
-    public Image(string fileName, string path)
+    private Image(string fileName, string path)
     {
         FileName = fileName;
         Path = path;
