@@ -50,6 +50,13 @@ public class KebabRepository : IKebabsRepository
 
     public async Task<Guid> Delete(Guid id)
     {
+        var kebab = await _context.KebabEntities.FindAsync(id);
+
+        if (kebab == null)
+        {
+            throw new KeyNotFoundException("Kebab not found");
+        }
+
         await _context.KebabEntities
             .Where(k => k.Id == id)
             .ExecuteDeleteAsync();
@@ -57,7 +64,21 @@ public class KebabRepository : IKebabsRepository
         return id;
     }
 
-    public async Task<List<Kebab>> Get()
+    public async Task<Kebab> Get(Guid id)
+    {
+        var kebabEntity = await _context.KebabEntities.FindAsync(id);
+
+        if (kebabEntity == null)
+        {
+            throw new KeyNotFoundException("Kebab not found");
+        }
+
+        var titleImage = !string.IsNullOrEmpty(kebabEntity.TitleImagePath) ? Image.Create(Path.GetFileName(kebabEntity.TitleImagePath), kebabEntity.TitleImagePath).Value : null;
+
+        return Kebab.Create(kebabEntity.Id, kebabEntity.Name, kebabEntity.Description, kebabEntity.Price, titleImage).Value;
+    }
+
+    public async Task<List<Kebab>> GetAll()
     {
         var kebabsEntities = await _context.KebabEntities
             .AsNoTracking()
