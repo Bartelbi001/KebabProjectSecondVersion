@@ -80,6 +80,29 @@ public class KebabsController : ControllerBase
         }
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<Kebab>> GetKebabById(Guid id)
+    {
+        try
+        {
+            var result = await _kebabService.GetKebabById(id);
+            if (result == null)
+            {
+                return NotFound("Kebab not found");
+                throw new KeyNotFoundException();
+            }
+
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound("Kebab not found");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<Guid>> UpdateKebab(Guid id, [FromForm] KebabsRequest request)
@@ -112,7 +135,7 @@ public class KebabsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult<Guid>> KebabDelete(Guid id)
+    public async Task<ActionResult<Guid>> DeleteKebab(Guid id)
     {
         try
         {
