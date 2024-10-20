@@ -1,4 +1,6 @@
-﻿using KebabStoreGen2.API.Contracts;
+﻿using CSharpFunctionalExtensions;
+using FluentValidation;
+using KebabStoreGen2.API.Contracts;
 using KebabStoreGen2.API.KebabStoreGen2.Core.Models;
 using KebabStoreGen2.Core.Abstractions;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +16,13 @@ public class KebabsController : ControllerBase
 
     private readonly IKebabService _kebabService;
     private readonly IImageService _imagesService;
+    private readonly IValidator<KebabsRequest> _validator;
 
-    public KebabsController(IKebabService kebabService, IImageService imagesService)
+    public KebabsController(IKebabService kebabService, IImageService imagesService, IValidator<KebabsRequest> validator)
     {
         _kebabService = kebabService;
         _imagesService = imagesService;
+        _validator = validator;
     }
 
     [HttpPost]
@@ -26,9 +30,10 @@ public class KebabsController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
+            var validationResult = await _validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(validationResult.Errors);
             }
 
             var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
@@ -109,9 +114,10 @@ public class KebabsController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
+            var validationResult = await _validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(validationResult.Errors);
             }
 
             var imageResult = await _imagesService.CreateImage(request.TitleImage, _staticFilesPath);
