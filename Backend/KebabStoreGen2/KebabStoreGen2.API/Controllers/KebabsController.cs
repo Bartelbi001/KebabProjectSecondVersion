@@ -29,6 +29,7 @@ public class KebabsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateKebab([FromForm] KebabsRequest request)
     {
+        var watch = System.Diagnostics.Stopwatch.StartNew();
         Log.Information("Creating a new kebab with Name: {Name}", request.Name);
         var validationResult = await _validator.ValidateAsync(request);
 
@@ -57,6 +58,8 @@ public class KebabsController : ControllerBase
             var kebabId = await _kebabService.CreateKebab(kebabResult.Value);
 
             Log.Information("Kebab created successfully with ID: {KebabId} and Name: {Name}", kebabId, request.Name);
+            watch.Stop();
+            Log.Information("Completed request to create a kebab by Id in {ElapsedMilliseconds}ms", watch.ElapsedMilliseconds);
             return Ok(new { Message = "Kebab created successfully", Id = kebabId, request.Name });
         }
         catch (Exception ex)

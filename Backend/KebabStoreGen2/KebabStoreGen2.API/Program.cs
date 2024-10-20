@@ -41,7 +41,7 @@ namespace KebabStoreGen2.API
                 builder.Services.AddScoped<IKebabsRepository, KebabRepository>();
                 builder.Services.AddScoped<IImageService, ImagesService>();
 
-                builder.Services.AddTransient<IValidator<KebabsRequest>, KebabStoreGen2Validator>();
+                builder.Services.AddTransient<IValidator<KebabsRequest>, KebabsRequestValidator>();
 
                 var app = builder.Build();
 
