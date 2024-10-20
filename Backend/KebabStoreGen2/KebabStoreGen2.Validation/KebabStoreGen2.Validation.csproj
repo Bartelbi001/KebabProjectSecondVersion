@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KebabStoreGen2.API\KebabStoreGen2.API.csproj" />
+    <ProjectReference Include="..\KebabStoreGen2.Core\KebabStoreGen2.Core.csproj" />
   </ItemGroup>
 
 </Project>

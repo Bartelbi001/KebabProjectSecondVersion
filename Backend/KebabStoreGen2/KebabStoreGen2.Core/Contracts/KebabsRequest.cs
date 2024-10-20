@@ -1,7 +1,8 @@
-﻿using KebabStoreGen2.API.KebabStoreGen2.Core.Models;
+﻿using KebabStoreGen2.Core.Models;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace KebabStoreGen2.API.Contracts;
+namespace KebabStoreGen2.Core.Contracts;
 
 //public record KebabsRequest(
 //    [Required][MaxLength(32)] string Name,

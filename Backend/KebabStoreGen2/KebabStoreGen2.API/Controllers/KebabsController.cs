@@ -1,8 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using FluentValidation;
-using KebabStoreGen2.API.Contracts;
-using KebabStoreGen2.API.KebabStoreGen2.Core.Models;
 using KebabStoreGen2.Core.Abstractions;
+using KebabStoreGen2.Core.Contracts;
+using KebabStoreGen2.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KebabStoreGen2.API.Controllers;

@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace KebabStoreGen2.API.KebabStoreGen2.Core.Models;
+namespace KebabStoreGen2.Core.Models;
 
 public class Image
 {
@@ -28,7 +28,7 @@ public class Image
 
         var image = new Image(fileName, path);
 
-        return Result.Success<Image>(image);
+        return Result.Success(image);
     }
 }
 

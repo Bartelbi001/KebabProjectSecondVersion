@@ -1,4 +1,4 @@
-﻿using KebabStoreGen2.API.KebabStoreGen2.Core.Models;
+﻿using KebabStoreGen2.Core.Models;
 using KebabStoreGen2.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

@@ -1,4 +1,4 @@
-﻿namespace KebabStoreGen2.API.Contracts;
+﻿namespace KebabStoreGen2.Core.Contracts;
 
 public record KebabsResponse(
     Guid id,

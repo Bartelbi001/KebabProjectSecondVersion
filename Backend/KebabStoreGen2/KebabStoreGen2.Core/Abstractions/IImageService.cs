@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using KebabStoreGen2.API.KebabStoreGen2.Core.Models;
+using KebabStoreGen2.Core.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace KebabStoreGen2.Core.Abstractions;

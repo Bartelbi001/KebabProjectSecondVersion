@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
-using KebabStoreGen2.API.Contracts;
-using KebabStoreGen2.API.KebabStoreGen2.Core.Models;
+using KebabStoreGen2.Core.Contracts;
+using KebabStoreGen2.Core.Models;
+
 
 namespace KebabStoreGen2.Validation.Validators;
 

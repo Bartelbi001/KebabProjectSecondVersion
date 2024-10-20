@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace KebabStoreGen2.API.KebabStoreGen2.Core.Models;
+namespace KebabStoreGen2.Core.Models;
 
 public class Kebab
 {
@@ -41,6 +41,6 @@ public class Kebab
 
         var kebab = new Kebab(id, name, description, price, titleImage);
 
-        return Result.Success<Kebab>(kebab);
+        return Result.Success(kebab);
     }
 }
