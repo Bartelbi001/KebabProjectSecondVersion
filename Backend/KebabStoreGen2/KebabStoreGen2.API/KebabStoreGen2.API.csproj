@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\KebabStoreGen2.Application\KebabStoreGen2.Application.csproj" />
     <ProjectReference Include="..\KebabStoreGen2.Core\KebabStoreGen2.Core.csproj" />
+    <ProjectReference Include="..\KebabStoreGen2.Validation\KebabStoreGen2.Validation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

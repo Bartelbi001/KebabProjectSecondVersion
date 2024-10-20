@@ -1,8 +1,11 @@
 
+using FluentValidation;
 using KebabStoreGen2.Application.Services;
 using KebabStoreGen2.Core.Abstractions;
+using KebabStoreGen2.Core.Contracts;
 using KebabStoreGen2.DataAccess;
 using KebabStoreGen2.DataAccess.Repositories;
+using KebabStoreGen2.Validation.Validators;
 using Microsoft.EntityFrameworkCore;
 
 namespace KebabStoreGen2.API
@@ -23,9 +26,13 @@ namespace KebabStoreGen2.API
                     options.UseSqlServer(builder.Configuration.GetConnectionString(nameof(KebabStoreGen2DbContext)));
                 });
 
+
+
             builder.Services.AddScoped<IKebabService, KebabsService>();
             builder.Services.AddScoped<IKebabsRepository, KebabRepository>();
             builder.Services.AddScoped<IImageService, ImagesService>();
+
+            builder.Services.AddTransient<IValidator<KebabsRequest>, KebabStoreGen2Validator>();
 
             var app = builder.Build();
 
