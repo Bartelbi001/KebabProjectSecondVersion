@@ -5,9 +5,9 @@ using KebabStoreGen2.Core.Models;
 
 namespace KebabStoreGen2.Validation.Validators;
 
-public class KebabStoreGen2Validator : AbstractValidator<KebabsRequest>
+public class KebabsRequestValidator : AbstractValidator<KebabsRequest>
 {
-    public KebabStoreGen2Validator()
+    public KebabsRequestValidator()
     {
         RuleFor(request => request.Name)
             .NotEmpty()
