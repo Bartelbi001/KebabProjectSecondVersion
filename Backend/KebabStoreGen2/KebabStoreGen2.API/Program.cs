@@ -1,12 +1,4 @@
-
-using FluentValidation;
-using KebabStoreGen2.Application.Services;
-using KebabStoreGen2.Core.Abstractions;
-using KebabStoreGen2.Core.Contracts;
-using KebabStoreGen2.DataAccess;
-using KebabStoreGen2.DataAccess.Repositories;
-using KebabStoreGen2.Validation.Validators;
-using Microsoft.EntityFrameworkCore;
+using KebabStoreGen2.API.Extensions;
 using Serilog;
 
 namespace KebabStoreGen2.API
@@ -15,49 +7,22 @@ namespace KebabStoreGen2.API
     {
         public static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .WriteTo.File("logs/KebabStoreGen2.txt", rollingInterval: RollingInterval.Day)
-                .CreateLogger();
-
             try
             {
-                Log.Information("Starting app the application");
+                Log.Information("Starting the application");
 
                 var builder = WebApplication.CreateBuilder(args);
 
-                builder.Services.AddControllers();
-                builder.Services.AddEndpointsApiExplorer();
-                builder.Services.AddSwaggerGen();
-
-                builder.Services.AddDbContext<KebabStoreGen2DbContext>(
-                    options =>
-                    {
-                        options.UseSqlServer(builder.Configuration.GetConnectionString(nameof(KebabStoreGen2DbContext)));
-                    });
-
-                builder.Services.AddScoped<IKebabService, KebabsService>();
-                builder.Services.AddScoped<IKebabsRepository, KebabRepository>();
-                builder.Services.AddScoped<IImageService, ImagesService>();
-
-                builder.Services.AddTransient<IValidator<KebabsRequest>, KebabsRequestValidator>();
+                builder.Services.ConfigureServices(builder.Configuration);
+                builder.Services.AddSerilogServices();
+                builder.Services.AddValidatorServices();
+                builder.Services.AddSwaggerServices();
+                builder.Services.AddAuthenticationServices(builder.Configuration); // «аготовка на Gen3, будет разделен на 2 сервиса
 
                 var app = builder.Build();
+                app.ConfigureMiddleware();
 
-                if (app.Environment.IsDevelopment())
-                {
-                    app.UseSwagger();
-                    app.UseSwaggerUI();
-                }
-
-                app.UseHttpsRedirection();
-
-                app.UseAuthorization();
-
-
-                app.MapControllers();
-
+                Log.Information("Application configured successfully");
                 app.Run();
             }
             catch (Exception ex)
