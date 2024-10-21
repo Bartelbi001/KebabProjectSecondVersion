@@ -31,8 +31,8 @@ public class KebabsController : ControllerBase
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
         Log.Information("Creating a new kebab with Name: {Name}", request.Name);
-        var validationResult = await _validator.ValidateAsync(request);
 
+        var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
             Log.Warning("Validation failed: {Errors}", validationResult.Errors);
