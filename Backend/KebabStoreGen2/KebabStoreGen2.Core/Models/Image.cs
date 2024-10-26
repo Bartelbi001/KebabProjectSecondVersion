@@ -26,8 +26,6 @@ public class Image
             return Result.Failure<Image>($"'{nameof(path)}' can't be null or empty");
         }
 
-        var image = new Image(fileName, path);
-
-        return Result.Success(image);
+        return Result.Success(new Image(fileName, path));
     }
 }

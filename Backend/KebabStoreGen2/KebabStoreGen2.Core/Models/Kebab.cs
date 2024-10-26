@@ -4,34 +4,34 @@ namespace KebabStoreGen2.Core.Models;
 
 public class Kebab
 {
-    public const int MAX_NAME_LENGTH = 32;
-    public const int MAX_DESCRIPTION_LENGTH = 100;
+    public const int MAX_KEBABNAME_LENGTH = 32;
+    public const int MAX_KEBABDESCRIPTION_LENGTH = 100;
 
     private Kebab(Guid id, string name, string description, decimal price, Image? titleImage)
     {
         Id = id;
-        Name = name;
-        Description = description;
+        KebabName = name;
+        KebabDescription = description;
         Price = price;
         TitleImage = titleImage;
     }
 
     public Guid Id { get; }
-    public string Name { get; } = string.Empty;
-    public string Description { get; } = string.Empty;
+    public string KebabName { get; } = string.Empty;
+    public string KebabDescription { get; } = string.Empty;
     public decimal Price { get; }
     public Image? TitleImage { get; }
 
-    public static Result<Kebab> Create(Guid id, string name, string description, decimal price, Image? titleImage)
+    public static Result<Kebab> Create(Guid id, string kebabName, string kebabDescription, decimal price, Image? titleImage)
     {
-        if (string.IsNullOrEmpty(name) || name.Length > MAX_NAME_LENGTH)
+        if (string.IsNullOrEmpty(kebabName) || kebabName.Length > MAX_KEBABNAME_LENGTH)
         {
-            return Result.Failure<Kebab>($"'{nameof(name)}' can't be null or empty");
+            return Result.Failure<Kebab>($"'{nameof(kebabName)}' can't be null or empty");
         }
 
-        if (string.IsNullOrEmpty(description) || description.Length > MAX_DESCRIPTION_LENGTH)
+        if (string.IsNullOrEmpty(kebabDescription) || kebabDescription.Length > MAX_KEBABDESCRIPTION_LENGTH)
         {
-            return Result.Failure<Kebab>($"'{nameof(description)}' can't be null or empty");
+            return Result.Failure<Kebab>($"'{nameof(kebabDescription)}' can't be null or empty");
         }
 
         if (price < 0)
@@ -39,8 +39,6 @@ public class Kebab
             return Result.Failure<Kebab>($"'{nameof(price)}' can't be negative");
         }
 
-        var kebab = new Kebab(id, name, description, price, titleImage);
-
-        return Result.Success(kebab);
+        return Result.Success(new Kebab(id, kebabName, kebabDescription, price, titleImage));
     }
 }
