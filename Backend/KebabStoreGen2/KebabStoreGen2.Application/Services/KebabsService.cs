@@ -36,3 +36,4 @@ public class KebabsService : IKebabService
     {
         return await _kebabsRepository.Update(id, name, description, price, titleImagePath);
     }
+}
