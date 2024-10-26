@@ -19,8 +19,8 @@ public class KebabRepository : IKebabsRepository
         var kebabEntity = new KebabEntity
         {
             Id = kebab.Id,
-            Name = kebab.Name,
-            Description = kebab.Description,
+            Name = kebab.KebabName,
+            Description = kebab.KebabDescription,
             Price = kebab.Price,
             TitleImagePath = kebab.TitleImage?.Path // Используем Path для хранения пути
         };
