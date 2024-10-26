@@ -86,8 +86,8 @@ public class KebabsController : ControllerBase
 
             var response = kebabs.Select(k => new KebabsResponse(
                 k.Id,
-                k.Name,
-                k.Description,
+                k.KebabName,
+                k.KebabDescription,
                 k.Price,
                 k.TitleImage != null ? k.TitleImage.Path : string.Empty // Проверка на null
             )).ToList();
@@ -114,10 +114,10 @@ public class KebabsController : ControllerBase
         {
             var result = await _kebabService.GetKebabById(id);
 
-            Log.Information("Successfully retrived kebab with {Id} and Name: {KebabName} from the database", id, result.Name);
+            Log.Information("Successfully retrived kebab with {Id} and Name: {KebabName} from the database", id, result.KebabName);
             watch.Stop();
             Log.Information("Completed request to get a kebab by Id in {ElapsedMilliseconds}ms", watch.ElapsedMilliseconds);
-            return Ok(new { Message = "Kebab retrieved successfully", Id = id, result.Name });
+            return Ok(new { Message = "Kebab retrieved successfully", Id = id, result.KebabName });
         }
         catch (KeyNotFoundException ex)
         {
