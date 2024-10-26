@@ -12,11 +12,11 @@ public class KebabConfigurations : IEntityTypeConfiguration<KebabEntity>
         builder.HasKey(x => x.Id);
 
         builder.Property(k => k.Name)
-            .HasMaxLength(Kebab.MAX_NAME_LENGTH)
+            .HasMaxLength(Kebab.MAX_KEBABNAME_LENGTH)
             .IsRequired();
 
         builder.Property(k => k.Description)
-            .HasMaxLength(Kebab.MAX_DESCRIPTION_LENGTH)
+            .HasMaxLength(Kebab.MAX_KEBABDESCRIPTION_LENGTH)
             .IsRequired();
 
         builder.Property(k => k.Price)
