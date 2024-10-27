@@ -24,14 +24,14 @@ public class Kebab
 
     public static Result<Kebab> Create(Guid id, string kebabName, string kebabDescription, decimal price, Image? titleImage)
     {
-        if (string.IsNullOrEmpty(kebabName) || kebabName.Length > MAX_KEBABNAME_LENGTH)
+        if (string.IsNullOrWhiteSpace(kebabName) || kebabName.Length > MAX_KEBABNAME_LENGTH)
         {
-            return Result.Failure<Kebab>($"'{nameof(kebabName)}' can't be null or empty");
+            return Result.Failure<Kebab>($"'{nameof(kebabName)}' is required and must be shorter than {MAX_KEBABNAME_LENGTH}");
         }
 
-        if (string.IsNullOrEmpty(kebabDescription) || kebabDescription.Length > MAX_KEBABDESCRIPTION_LENGTH)
+        if (string.IsNullOrWhiteSpace(kebabDescription) || kebabDescription.Length > MAX_KEBABDESCRIPTION_LENGTH)
         {
-            return Result.Failure<Kebab>($"'{nameof(kebabDescription)}' can't be null or empty");
+            return Result.Failure<Kebab>($"'{nameof(kebabDescription)}' is required and must be shorter than {MAX_KEBABDESCRIPTION_LENGTH}");
         }
 
         if (price < 0)

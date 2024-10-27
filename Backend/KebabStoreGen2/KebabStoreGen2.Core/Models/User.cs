@@ -21,12 +21,12 @@ public class User
 
     public static Result<User> Create(Guid id, string userName, string passwordHash, Email email)
     {
-        if (string.IsNullOrEmpty(userName) || userName.Length > MAX_USERNAME_LENGTH)
+        if (string.IsNullOrWhiteSpace(userName) || userName.Length > MAX_USERNAME_LENGTH)
         {
             return Result.Failure<User>($"'{nameof(userName)}' can't be null or empty and must be shorter than {MAX_USERNAME_LENGTH}");
         }
 
-        if (string.IsNullOrEmpty(passwordHash))
+        if (string.IsNullOrWhiteSpace(passwordHash))
         {
             return Result.Failure<User>($"'{nameof(passwordHash)}' can't be null or empty");
         }

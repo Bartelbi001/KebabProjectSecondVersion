@@ -16,12 +16,12 @@ public class Image
 
     public static Result<Image> Create(string fileName, string path)
     {
-        if (string.IsNullOrEmpty(fileName))
+        if (string.IsNullOrWhiteSpace(fileName))
         {
             return Result.Failure<Image>($"'{nameof(fileName)}' can't be null or empty");
         }
 
-        if (string.IsNullOrEmpty(path))
+        if (string.IsNullOrWhiteSpace(path))
         {
             return Result.Failure<Image>($"'{nameof(path)}' can't be null or empty");
         }
