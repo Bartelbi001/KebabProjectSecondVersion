@@ -2,8 +2,8 @@
 
 public record KebabsResponse(
     Guid id,
-    string Name,
-    string Description,
+    string KebabName,
+    string KebabDescription,
     decimal Price,
     string TitleImagePath);
 

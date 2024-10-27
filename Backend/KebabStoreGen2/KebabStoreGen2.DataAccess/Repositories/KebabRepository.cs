@@ -19,8 +19,8 @@ public class KebabRepository : IKebabsRepository
         var kebabEntity = new KebabEntity
         {
             Id = kebab.Id,
-            Name = kebab.KebabName,
-            Description = kebab.KebabDescription,
+            KebabName = kebab.KebabName,
+            KebabDescription = kebab.KebabDescription,
             Price = kebab.Price,
             TitleImagePath = kebab.TitleImage?.Path // Используем Path для хранения пути
         };
@@ -30,23 +30,6 @@ public class KebabRepository : IKebabsRepository
 
         return kebabEntity.Id;
     }
-
-    //public async Task<Guid> Create(Kebab kebab)
-    //{
-    //    var kebabEntity = new KebabEntity
-    //    {
-    //        Id = kebab.Id,
-    //        Name = kebab.Name,
-    //        Description = kebab.Description,
-    //        Price = kebab.Price,
-    //        TitleImage = kebab.TitleImage
-    //    };
-
-    //    await _context.AddAsync(kebabEntity);
-    //    await _context.SaveChangesAsync();
-
-    //    return kebabEntity.Id;
-    //}
 
     public async Task<Guid> Delete(Guid id)
     {
@@ -75,7 +58,7 @@ public class KebabRepository : IKebabsRepository
 
         var titleImage = !string.IsNullOrEmpty(kebabEntity.TitleImagePath) ? Image.Create(Path.GetFileName(kebabEntity.TitleImagePath), kebabEntity.TitleImagePath).Value : null;
 
-        return Kebab.Create(kebabEntity.Id, kebabEntity.Name, kebabEntity.Description, kebabEntity.Price, titleImage).Value;
+        return Kebab.Create(kebabEntity.Id, kebabEntity.KebabName, kebabEntity.KebabDescription, kebabEntity.Price, titleImage).Value;
     }
 
     public async Task<List<Kebab>> GetAll()
@@ -89,25 +72,12 @@ public class KebabRepository : IKebabsRepository
             {
                 var titleImage = !string.IsNullOrEmpty(k.TitleImagePath) ? Image.Create(Path.GetFileName(k.TitleImagePath), k.TitleImagePath).Value : null;
 
-                return Kebab.Create(k.Id, k.Name, k.Description, k.Price, titleImage).Value;
+                return Kebab.Create(k.Id, k.KebabName, k.KebabDescription, k.Price, titleImage).Value;
             })
             .ToList();
 
         return kebabs;
     }
-
-    //public async Task<List<Kebab>> Get()
-    //{
-    //    var kebabsEntities = await _context.KebabEntities
-    //        .AsNoTracking()
-    //        .ToListAsync();
-
-    //    var kebabs = kebabsEntities
-    //        .Select(k => Kebab.Create(k.Id, k.Name, k.Description, k.Price, k.TitleImage).Value)
-    //        .ToList();
-
-    //    return kebabs;
-    //}
 
     public async Task<Guid> Update(Guid id, string name, string description, decimal price, string? titleImagePath = null)
     {
@@ -118,8 +88,8 @@ public class KebabRepository : IKebabsRepository
             throw new KeyNotFoundException("Kebab not found");
         }
 
-        kebab.Name = name;
-        kebab.Description = description;
+        kebab.KebabName = name;
+        kebab.KebabDescription = description;
         kebab.Price = price;
 
         if (!string.IsNullOrEmpty(titleImagePath))
@@ -132,18 +102,4 @@ public class KebabRepository : IKebabsRepository
 
         return id;
     }
-
-
-
-    //public async Task<Guid> Update(Guid id, string name, string description, decimal price)
-    //{
-    //    await _context.KebabEntities
-    //        .Where(k => k.Id == id)
-    //        .ExecuteUpdateAsync(s => s
-    //            .SetProperty(k => k.Name, name)
-    //            .SetProperty(k => k.Description, description)
-    //            .SetProperty(k => k.Price, price));
-
-    //    return id;
-    //}
 }

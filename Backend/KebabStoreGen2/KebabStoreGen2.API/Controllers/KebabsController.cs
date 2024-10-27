@@ -30,7 +30,7 @@ public class KebabsController : ControllerBase
     public async Task<ActionResult<Guid>> CreateKebab([FromForm] KebabsRequest request)
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        Log.Information("Creating a new kebab with Name: {Name}", request.Name);
+        Log.Information("Creating a new kebab with Name: {Name}", request.KebabName);
 
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
@@ -48,7 +48,7 @@ public class KebabsController : ControllerBase
                 return BadRequest(imageResult.Error);
             }
 
-            var kebabResult = Kebab.Create(Guid.NewGuid(), request.Name, request.Description, request.Price, imageResult.Value);
+            var kebabResult = Kebab.Create(Guid.NewGuid(), request.KebabName, request.KebabDescription, request.Price, imageResult.Value);
             if (kebabResult.IsFailure)
             {
                 Log.Error("Kebab creation failed: {Error}", kebabResult.Error);
@@ -57,10 +57,10 @@ public class KebabsController : ControllerBase
 
             var kebabId = await _kebabService.CreateKebab(kebabResult.Value);
 
-            Log.Information("Kebab created successfully with ID: {KebabId} and Name: {Name}", kebabId, request.Name);
+            Log.Information("Kebab created successfully with ID: {KebabId} and Name: {Name}", kebabId, request.KebabName);
             watch.Stop();
             Log.Information("Completed request to create a kebab by Id in {ElapsedMilliseconds}ms", watch.ElapsedMilliseconds);
-            return Ok(new { Message = "Kebab created successfully", Id = kebabId, request.Name });
+            return Ok(new { Message = "Kebab created successfully", Id = kebabId, request.KebabName });
         }
         catch (Exception ex)
         {
@@ -135,7 +135,7 @@ public class KebabsController : ControllerBase
     public async Task<ActionResult<Guid>> UpdateKebab(Guid id, [FromForm] KebabsRequest request)
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        Log.Information("Starting request to update a kebab with Id: {Id} and Name: {KebabName}", id, request.Name);
+        Log.Information("Starting request to update a kebab with Id: {Id} and Name: {KebabName}", id, request.KebabName);
 
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
@@ -153,7 +153,7 @@ public class KebabsController : ControllerBase
                 return BadRequest(imageResult.Error);
             }
 
-            var kebabId = await _kebabService.UpdateKebab(id, request.Name, request.Description, request.Price, imageResult.Value.Path);
+            var kebabId = await _kebabService.UpdateKebab(id, request.KebabName, request.KebabDescription, request.Price, imageResult.Value.Path);
 
             Log.Information("Kebab with Id: {Id} updated successfully", kebabId);
             watch.Stop();

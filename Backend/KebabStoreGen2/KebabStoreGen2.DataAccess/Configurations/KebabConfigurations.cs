@@ -11,15 +11,16 @@ public class KebabConfigurations : IEntityTypeConfiguration<KebabEntity>
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(k => k.Name)
+        builder.Property(k => k.KebabName)
             .HasMaxLength(Kebab.MAX_KEBABNAME_LENGTH)
             .IsRequired();
 
-        builder.Property(k => k.Description)
+        builder.Property(k => k.KebabDescription)
             .HasMaxLength(Kebab.MAX_KEBABDESCRIPTION_LENGTH)
             .IsRequired();
 
         builder.Property(k => k.Price)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnType("decimal(18, 2)");
     }
 }

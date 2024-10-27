@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace KebabStoreGen2.Core.Contracts;
 
 public record KebabsRequest(
-    [Required][MaxLength(Kebab.MAX_KEBABNAME_LENGTH)] string Name,
-    [Required][MaxLength(Kebab.MAX_KEBABDESCRIPTION_LENGTH)] string Description,
+    [Required][MaxLength(Kebab.MAX_KEBABNAME_LENGTH)] string KebabName,
+    [Required][MaxLength(Kebab.MAX_KEBABDESCRIPTION_LENGTH)] string KebabDescription,
     [Required] decimal Price,
     IFormFile TitleImage);

@@ -9,11 +9,11 @@ public class KebabsRequestValidator : AbstractValidator<KebabsRequest>
 {
     public KebabsRequestValidator()
     {
-        RuleFor(request => request.Name)
+        RuleFor(request => request.KebabName)
             .NotEmpty()
             .MaximumLength(Kebab.MAX_KEBABNAME_LENGTH)
             .WithMessage("Name is required and must be shorter than 32");
-        RuleFor(request => request.Description)
+        RuleFor(request => request.KebabDescription)
             .NotEmpty()
             .MaximumLength(Kebab.MAX_KEBABDESCRIPTION_LENGTH)
             .WithMessage("Description is required and must be shorter than 100");

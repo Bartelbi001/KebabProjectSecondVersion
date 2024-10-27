@@ -8,5 +8,5 @@ public interface IKebabService
     Task<Guid> DeleteKebab(Guid id);
     Task<List<Kebab>> GetAllKebabs();
     Task<Kebab> GetKebabById(Guid id);
-    Task<Guid> UpdateKebab(Guid id, string name, string description, decimal price, string? titleImagePath = null); // Обновление интерфейса
+    Task<Guid> UpdateKebab(Guid id, string kebabName, string kebabDescription, decimal price, string? titleImagePath = null);
 }
