@@ -13,13 +13,13 @@ public class Email
         Value = value;
     }
 
-    public string Value { get; } = string.Empty;
+    public string Value { get; private set; } = string.Empty;
 
     public static Result<Email> Create(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
         {
-            return Result.Failure<Email>("Email is required");
+            return Result.Failure<Email>($"'{nameof(email)}' is required");
         }
 
         try
@@ -32,13 +32,12 @@ public class Email
         }
         catch (Exception)
         {
-
             return Result.Failure<Email>("Invalid email format");
         }
 
         if (email.Length > MAX_EMAIL_LENGTH)
         {
-            return Result.Failure<Email>("Email must be shorter than 254 characters");
+            return Result.Failure<Email>($"'{nameof(email)}' must be shorteror equal than {MAX_EMAIL_LENGTH} characters");
         }
 
         return Result.Success(new Email(email));
