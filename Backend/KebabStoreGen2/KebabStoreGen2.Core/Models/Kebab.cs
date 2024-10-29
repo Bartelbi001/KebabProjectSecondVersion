@@ -1,4 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
+using KebabStoreGen2.Core.Abstractions;
+using KebabStoreGen2.Core.Models.Enums;
 
 namespace KebabStoreGen2.Core.Models;
 
@@ -7,22 +9,36 @@ public class Kebab
     public const int MAX_KEBABNAME_LENGTH = 32;
     public const int MAX_KEBABDESCRIPTION_LENGTH = 100;
 
-    private Kebab(Guid id, string name, string description, decimal price, Image? titleImage)
+    private Kebab(Guid id, string name, string description, decimal price,
+        StuffingCategory stuffing, WrapCategory wrap, bool isAvailable,
+        Image? titleImage, List<Ingredient> ingredients, int calories)
     {
         Id = id;
         KebabName = name;
         KebabDescription = description;
         Price = price;
+        Stuffing = stuffing;
+        Wrap = wrap;
+        IsAvailable = isAvailable;
         TitleImage = titleImage;
+        Ingredients = ingredients;
+        Calories = calories;
     }
 
     public Guid Id { get; }
-    public string KebabName { get; } = string.Empty;
-    public string KebabDescription { get; } = string.Empty;
-    public decimal Price { get; }
-    public Image? TitleImage { get; }
+    public string KebabName { get; private set; } = string.Empty;
+    public string KebabDescription { get; private set; } = string.Empty;
+    public decimal Price { get; private set; }
+    public StuffingCategory Stuffing { get; private set; }
+    public WrapCategory Wrap { get; private set; }
+    public bool IsAvailable { get; private set; }
+    public Image? TitleImage { get; private set; }
+    public List<Ingredient> Ingredients { get; private set; }
+    public int Calories { get; private set; }
 
-    public static Result<Kebab> Create(Guid id, string kebabName, string kebabDescription, decimal price, Image? titleImage)
+    public static Result<Kebab> Create(Guid id, string kebabName, string kebabDescription, decimal price,
+        StuffingCategory stuffing, WrapCategory wrap, bool isAvailable,
+        Image? titleImage, List<Ingredient> ingredients, INutritionCalculatorService calculateTotalCaloriesService)
     {
         if (string.IsNullOrWhiteSpace(kebabName) || kebabName.Length > MAX_KEBABNAME_LENGTH)
         {
@@ -39,6 +55,35 @@ public class Kebab
             return Result.Failure<Kebab>($"'{nameof(price)}' can't be negative");
         }
 
-        return Result.Success(new Kebab(id, kebabName, kebabDescription, price, titleImage));
+        if (!Enum.IsDefined(typeof(StuffingCategory), stuffing))
+        {
+            return Result.Failure<Kebab>($"'{nameof(stuffing)}' is not a valid value");
+        }
+
+        if (!Enum.IsDefined(typeof(WrapCategory), wrap))
+        {
+            return Result.Failure<Kebab>($"'{nameof(wrap)}' is not a valid value");
+        }
+
+        if (ingredients == null || ingredients.Count == 0)
+        {
+            return Result.Failure<Kebab>($"'{nameof(ingredients)}' are required");
+        }
+
+        foreach (var ingredient in ingredients)
+        {
+            if (ingredient == null)
+            {
+                return Result.Failure<Kebab>("All ingredients must be valid");
+            }
+        }
+
+        var calculatedCalories = calculateTotalCaloriesService.CalculateTotalCalories(ingredients);
+        if (calculatedCalories < 0)
+        {
+            return Result.Failure<Kebab>($"'{nameof(calculatedCalories)}' can't be negative");
+        }
+
+        return Result.Success(new Kebab(id, kebabName, kebabDescription, price, stuffing, wrap, isAvailable, titleImage, ingredients, calculatedCalories));
     }
 }
