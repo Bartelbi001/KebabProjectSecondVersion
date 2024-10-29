@@ -84,6 +84,7 @@ public class Kebab
             return Result.Failure<Kebab>($"'{nameof(calculatedCalories)}' can't be negative");
         }
 
-        return Result.Success(new Kebab(id, kebabName, kebabDescription, price, stuffing, wrap, isAvailable, titleImage, ingredients, calculatedCalories));
+        return Result.Success(new Kebab(id, kebabName, kebabDescription, price,
+            stuffing, wrap, isAvailable, titleImage, ingredients, calculatedCalories));
     }
 }
