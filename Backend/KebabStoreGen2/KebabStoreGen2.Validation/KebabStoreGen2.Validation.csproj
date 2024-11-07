@@ -14,4 +14,8 @@
     <ProjectReference Include="..\KebabStoreGen2.Core\KebabStoreGen2.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Validators\" />
+  </ItemGroup>
+
 </Project>

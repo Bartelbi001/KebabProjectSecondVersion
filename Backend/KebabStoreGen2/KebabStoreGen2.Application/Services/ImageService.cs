@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace KebabStoreGen2.Application.Services;
 
-public class ImagesService : IImageService
+public class ImageService : IImageService
 {
     public async Task<Result<Image>> CreateImage(IFormFile titleImage, string path)
     {

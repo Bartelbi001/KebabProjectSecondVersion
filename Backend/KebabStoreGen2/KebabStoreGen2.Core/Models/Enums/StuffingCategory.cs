@@ -4,6 +4,8 @@ public enum StuffingCategory
 {
     Chicken,
     Beef,
+    Pork,
     Vegetarian,
-    Mixed
+    Mixed,
+    Other
 }

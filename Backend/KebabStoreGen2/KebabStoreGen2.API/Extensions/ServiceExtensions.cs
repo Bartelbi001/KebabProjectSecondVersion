@@ -16,9 +16,12 @@ namespace KebabStoreGen2.API.Extensions
                 options.UseSqlServer(configuration.GetConnectionString(nameof(KebabStoreGen2DbContext)));
             });
 
-            services.AddScoped<IKebabService, KebabsService>();
-            services.AddScoped<IKebabsRepository, KebabRepository>();
-            services.AddScoped<IImageService, ImagesService>();
+            services.AddScoped<IKebabService, KebabService>();
+            services.AddScoped<IKebabRepository, KebabRepository>();
+            services.AddScoped<IIngredientService, IngredientService>();
+            services.AddScoped<IIngredientRepository, IngredientRepository>();
+            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<INutritionCalculatorService, CalculateTotalCaloriesService>();
         }
     }
 }

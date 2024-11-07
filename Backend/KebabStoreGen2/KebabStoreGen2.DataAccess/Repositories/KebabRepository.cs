@@ -1,53 +1,159 @@
 ﻿using KebabStoreGen2.Core.Abstractions;
 using KebabStoreGen2.Core.Models;
 using KebabStoreGen2.DataAccess.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace KebabStoreGen2.DataAccess.Repositories;
 
-public class KebabRepository : IKebabsRepository
+public class KebabRepository : IKebabRepository
 {
     private readonly KebabStoreGen2DbContext _context;
+    private readonly INutritionCalculatorService _calculateTotalCaloriesService;
+    private readonly IImageService _imageService;
 
-    public KebabRepository(KebabStoreGen2DbContext context)
+    public KebabRepository(KebabStoreGen2DbContext context, INutritionCalculatorService calculateTotalCaloriesService, IImageService imageService)
     {
         _context = context;
+        _calculateTotalCaloriesService = calculateTotalCaloriesService;
+        _imageService = imageService;
     }
 
-    public async Task<Guid> Create(Kebab kebab)
+    public async Task<Guid> Create(KebabEntity kebabEntity, IFormFile? titleImage = null, string imagePath = "")
     {
-        var kebabEntity = new KebabEntity
-        {
-            Id = kebab.Id,
-            KebabName = kebab.KebabName,
-            KebabDescription = kebab.KebabDescription,
-            Price = kebab.Price,
-            TitleImagePath = kebab.TitleImage?.Path // Используем Path для хранения пути
-        };
+        var ingredientEntities = await _context.IngredientEntities
+            .Where(i =>
+                kebabEntity.Ingredients
+                .Select(ing => ing.Id)
+                .Contains(i.Id))
+            .ToListAsync();
 
-        await _context.AddAsync(kebabEntity);
+        if (!ingredientEntities.Any())
+        {
+            throw new KeyNotFoundException("No valid ingredients found");
+        }
+
+        var ingredients = ingredientEntities
+            .Select(i => Ingredient.Create(
+                i.Id,
+                i.IngredientName,
+                i.WeightInGrams,
+                i.Calories,
+                i.Protein,
+                i.Fat,
+                i.Carbs
+                ).Value).ToList();
+
+        var calculatedCalories = _calculateTotalCaloriesService.CalculateTotalCalories(ingredients);
+
+        Image? image = null;
+        if (titleImage != null)
+        {
+            var imageResult = await _imageService.CreateImage(titleImage, imagePath);
+
+            if (imageResult.IsFailure)
+            {
+                throw new Exception(imageResult.Error);
+            }
+
+            image = imageResult.Value;
+        }
+
+        var kebab = Kebab.Create(
+            Guid.NewGuid(),
+            kebabEntity.KebabName,
+            kebabEntity.KebabDescription,
+            kebabEntity.Price,
+            kebabEntity.Stuffing,
+            kebabEntity.Wrap,
+            kebabEntity.IsAvailable,
+            image,
+            ingredients,
+            _calculateTotalCaloriesService
+            );
+
+        if (kebab.IsFailure)
+        {
+            throw new Exception(kebab.Error);
+        }
+
+        kebabEntity.Id = kebab.Value.Id;
+        kebabEntity.Calories = calculatedCalories;
+        kebabEntity.Ingredients = ingredientEntities;
+        kebabEntity.TitleImagePath = image?.Path;
+
+        await _context.KebabEntities.AddAsync(kebabEntity);
         await _context.SaveChangesAsync();
 
         return kebabEntity.Id;
     }
 
-    public async Task<Guid> Delete(Guid id)
+    public async Task<KebabEntity> GetById(Guid id)
     {
-        var kebab = await _context.KebabEntities.FindAsync(id);
+        return await _context.KebabEntities
+            .Include(k => k.Ingredients)
+            .FirstOrDefaultAsync(k => k.Id == id);
+    }
 
-        if (kebab == null)
+    public async Task<List<KebabEntity>> GetAll()
+    {
+        return await _context.KebabEntities
+            .Include(k => k.Ingredients)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task Update(KebabEntity kebabEntity, string? titleImagePath = null, IFormFile? titleImage = null, string imagePath = "")
+    {
+        var existingKebab = await _context.KebabEntities
+            .Include(k => k.Ingredients)
+            .FirstOrDefaultAsync(k => k.Id == kebabEntity.Id);
+
+        if (existingKebab == null)
         {
             throw new KeyNotFoundException("Kebab not found");
         }
 
-        await _context.KebabEntities
-            .Where(k => k.Id == id)
-            .ExecuteDeleteAsync();
+        _context.Entry(existingKebab).CurrentValues.SetValues(kebabEntity);
 
-        return id;
+        existingKebab.Ingredients.Clear();
+        existingKebab.Ingredients.AddRange(kebabEntity.Ingredients);
+
+
+
+        var ingredientEntities = existingKebab.Ingredients
+            .Select(i => Ingredient.Create(
+                i.Id,
+                i.IngredientName,
+                i.WeightInGrams,
+                i.Calories,
+                i.Protein,
+                i.Fat,
+                i.Carbs).Value).ToList();
+
+        var calculatedCalories = _calculateTotalCaloriesService.CalculateTotalCalories(ingredientEntities);
+        existingKebab.Calories = calculatedCalories;
+
+        if (titleImage != null)
+        {
+            var imageResult = await _imageService.CreateImage(titleImage, imagePath);
+
+            if (imageResult.IsFailure)
+            {
+                throw new Exception(imageResult.Error);
+            }
+
+            existingKebab.TitleImagePath = imageResult.Value.Path;
+        }
+        else if (!string.IsNullOrWhiteSpace(titleImagePath))
+        {
+            existingKebab.TitleImagePath = titleImagePath;
+        }
+
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<Kebab> Get(Guid id)
+    public async Task<Guid> Delete(Guid id)
     {
         var kebabEntity = await _context.KebabEntities.FindAsync(id);
 
@@ -56,50 +162,9 @@ public class KebabRepository : IKebabsRepository
             throw new KeyNotFoundException("Kebab not found");
         }
 
-        var titleImage = !string.IsNullOrEmpty(kebabEntity.TitleImagePath) ? Image.Create(Path.GetFileName(kebabEntity.TitleImagePath), kebabEntity.TitleImagePath).Value : null;
-
-        return Kebab.Create(kebabEntity.Id, kebabEntity.KebabName, kebabEntity.KebabDescription, kebabEntity.Price, titleImage).Value;
-    }
-
-    public async Task<List<Kebab>> GetAll()
-    {
-        var kebabsEntities = await _context.KebabEntities
-            .AsNoTracking()
-            .ToListAsync();
-
-        var kebabs = kebabsEntities
-            .Select(k =>
-            {
-                var titleImage = !string.IsNullOrEmpty(k.TitleImagePath) ? Image.Create(Path.GetFileName(k.TitleImagePath), k.TitleImagePath).Value : null;
-
-                return Kebab.Create(k.Id, k.KebabName, k.KebabDescription, k.Price, titleImage).Value;
-            })
-            .ToList();
-
-        return kebabs;
-    }
-
-    public async Task<Guid> Update(Guid id, string name, string description, decimal price, string? titleImagePath = null)
-    {
-        var kebab = await _context.KebabEntities.FindAsync(id);
-
-        if (kebab == null)
-        {
-            throw new KeyNotFoundException("Kebab not found");
-        }
-
-        kebab.KebabName = name;
-        kebab.KebabDescription = description;
-        kebab.Price = price;
-
-        if (!string.IsNullOrEmpty(titleImagePath))
-        {
-            kebab.TitleImagePath = titleImagePath;
-        }
-
-        _context.KebabEntities.Update(kebab);
+        _context.KebabEntities.Remove(kebabEntity);
         await _context.SaveChangesAsync();
 
-        return id;
+        return kebabEntity.Id;
     }
 }

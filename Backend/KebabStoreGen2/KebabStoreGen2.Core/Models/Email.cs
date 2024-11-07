@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using KebabStoreGen2.Core.Constants;
 using System.Net.Mail;
 
 
@@ -6,8 +7,6 @@ namespace KebabStoreGen2.Core.Models;
 
 public class Email
 {
-    public const int MAX_EMAIL_LENGTH = 254;
-
     private Email(string value)
     {
         Value = value;
@@ -35,9 +34,9 @@ public class Email
             return Result.Failure<Email>("Invalid email format");
         }
 
-        if (email.Length > MAX_EMAIL_LENGTH)
+        if (email.Length > EmailContracts.MAX_EMAIL_LENGTH)
         {
-            return Result.Failure<Email>($"'{nameof(email)}' must be shorteror equal than {MAX_EMAIL_LENGTH} characters");
+            return Result.Failure<Email>($"'{nameof(email)}' must be shorteror equal than {EmailContracts.MAX_EMAIL_LENGTH} characters");
         }
 
         return Result.Success(new Email(email));

@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KebabStoreGen2.Core", "Keba
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KebabStoreGen2.DataAccess", "KebabStoreGen2.DataAccess\KebabStoreGen2.DataAccess.csproj", "{676FD7CC-DF38-4D86-A6F2-4CA85B7846D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KebabStoreGen2.Validation", "KebabStoreGen2.Validation\KebabStoreGen2.Validation.csproj", "{911DEB47-331A-4083-B36E-6ED113969950}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{676FD7CC-DF38-4D86-A6F2-4CA85B7846D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{676FD7CC-DF38-4D86-A6F2-4CA85B7846D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{676FD7CC-DF38-4D86-A6F2-4CA85B7846D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{911DEB47-331A-4083-B36E-6ED113969950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{911DEB47-331A-4083-B36E-6ED113969950}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{911DEB47-331A-4083-B36E-6ED113969950}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{911DEB47-331A-4083-B36E-6ED113969950}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

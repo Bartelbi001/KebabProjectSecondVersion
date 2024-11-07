@@ -1,12 +1,13 @@
 ﻿using KebabStoreGen2.Core.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace KebabStoreGen2.Core.Abstractions;
 
 public interface IKebabService
 {
-    Task<Guid> CreateKebab(Kebab kebab);
-    Task<Guid> DeleteKebab(Guid id);
-    Task<List<Kebab>> GetAllKebabs();
+    Task<Guid> CreateKebab(Kebab kebab, IFormFile? titleImage = null, string imagePath = "");
     Task<Kebab> GetKebabById(Guid id);
-    Task<Guid> UpdateKebab(Guid id, string kebabName, string kebabDescription, decimal price, string? titleImagePath = null);
+    Task<List<Kebab>> GetAllKebabs();
+    Task UpdateKebab(Kebab kebab, string? titleImagePath = null, IFormFile? titleImage = null, string imagePath = "");
+    Task<Guid> DeleteKebab(Guid id);
 }

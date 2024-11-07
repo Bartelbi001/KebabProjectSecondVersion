@@ -1,12 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
+using KebabStoreGen2.Core.Constants;
 
 namespace KebabStoreGen2.Core.Models;
 
 public class Ingredient
 {
-    public const int MAX_INGREDIENTNAME_LENGTH = 16;
-
-    public Ingredient(Guid id, string ingredientName, int weightInGrams, int calories, int protein, int fat, int carbs)
+    private Ingredient(Guid id, string ingredientName, int weightInGrams, int calories, int protein, int fat, int carbs)
     {
         Id = id;
         IngredientName = ingredientName;
@@ -27,9 +26,9 @@ public class Ingredient
 
     public static Result<Ingredient> Create(Guid id, string ingredientName, int weightInGrams, int calories, int protein, int fat, int carbs)
     {
-        if (string.IsNullOrWhiteSpace(ingredientName) || ingredientName.Length > MAX_INGREDIENTNAME_LENGTH)
+        if (string.IsNullOrWhiteSpace(ingredientName) || ingredientName.Length > IngredientConstants.MAX_INGREDIENTNAME_LENGTH)
         {
-            return Result.Failure<Ingredient>($"'{nameof(ingredientName)}' is required and must be shorter or equal than {MAX_INGREDIENTNAME_LENGTH} characters");
+            return Result.Failure<Ingredient>($"'{nameof(ingredientName)}' is required and must be shorter or equal than {IngredientConstants.MAX_INGREDIENTNAME_LENGTH} characters");
         }
 
         if (weightInGrams < 0)
