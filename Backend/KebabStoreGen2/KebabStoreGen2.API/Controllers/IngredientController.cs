@@ -22,7 +22,7 @@ public class IngredientController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> CreateIngredient([FromBody] IngredientRequest request)
+    public async Task<ActionResult<Guid>> CreateIngredient([FromForm] IngredientRequest request)
     {
         var watch = Stopwatch.StartNew();
         Log.Information("Creating a new ingredient with Name: {Name}", request.IngredientName);
@@ -142,7 +142,7 @@ public class IngredientController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateIngredient(Guid id, [FromBody] IngredientRequest request)
+    public async Task<IActionResult> UpdateIngredient(Guid id, [FromForm] IngredientRequest request)
     {
         var watch = new Stopwatch();
         Log.Information("Starting request to update an ingredient with Id: {Id} and Name: {IngredientName}", id, request.IngredientName);

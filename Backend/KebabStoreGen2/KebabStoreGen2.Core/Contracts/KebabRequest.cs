@@ -13,4 +13,5 @@ public record KebabRequest(
     [Required] WrapCategory Wrap,
     [Required] bool IsAvailable,
     IFormFile? TitleImage,
-    List<IngredientRequest> Ingredients);
+    List<Guid>? ExistingIngredientIds,
+    List<IngredientRequest>? NewIngredients);

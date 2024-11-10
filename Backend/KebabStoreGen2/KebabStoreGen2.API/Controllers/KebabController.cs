@@ -44,7 +44,9 @@ public class KebabController : ControllerBase
 
         try
         {
-            Image? image = null;
+            string? imagePath = null;
+            string? fileName = null;
+
             if (request.TitleImage != null)
             {
                 var imageResult = await _imageService.CreateImage(request.TitleImage, _staticFilesPath);
@@ -53,39 +55,24 @@ public class KebabController : ControllerBase
                     Log.Error("Image creation failed: {Error}", imageResult.Error);
                     return BadRequest(imageResult.Error);
                 }
-                image = imageResult.Value;
+                imagePath = imageResult.Value.Path;
+                fileName = imageResult.Value.FileName;
             }
 
-            var ingredients = request.Ingredients
-                .Select(i => Ingredient.Create(
-                    Guid.NewGuid(),
-                    i.IngredientName,
-                    i.WeightInGrams,
-                    i.Calories,
-                    i.Protein,
-                    i.Fat,
-                    i.Carbs).Value)
-                .ToList();
+            var ingredientIds = request.ExistingIngredientIds ?? new List<Guid>();
+            var newIngredients = request.NewIngredients ?? new List<IngredientRequest>();
 
-            var kebabResult = Kebab.Create(
-                Guid.NewGuid(),
+            var kebabId = await _kebabService.CreateKebab(
                 request.KebabName,
                 request.KebabDescription,
                 request.Price,
                 request.Stuffing,
                 request.Wrap,
                 request.IsAvailable,
-                image,
-                ingredients,
-                _nutritionCalculatorService);
-
-            if (kebabResult.IsFailure)
-            {
-                Log.Error("Kebab creation failed: {Error}", kebabResult.Error);
-                return BadRequest(kebabResult.Error);
-            }
-
-            var kebabId = await _kebabService.CreateKebab(kebabResult.Value, request.TitleImage, _staticFilesPath);
+                fileName,
+                imagePath,
+                ingredientIds,
+                newIngredients);
 
             Log.Information("Kebab created successfully with ID: {KebabId} and Name: {Name}", kebabId, request.KebabName);
             watch.Stop();
@@ -212,7 +199,9 @@ public class KebabController : ControllerBase
 
         try
         {
-            Image? image = null;
+            string? imagePath = null;
+            string? fileName = null;
+
             if (request.TitleImage != null)
             {
                 var imageResult = await _imageService.CreateImage(request.TitleImage, _staticFilesPath);
@@ -221,21 +210,14 @@ public class KebabController : ControllerBase
                     Log.Error("Image creation failed for kebab with Id: {Id}. Error: {Error}", id, imageResult.Error);
                     return BadRequest(imageResult.Error);
                 }
-                image = imageResult.Value;
+                imagePath = imageResult.Value.Path;
+                fileName = imageResult.Value.FileName;
             }
 
-            var ingredients = request.Ingredients
-                .Select(i => Ingredient.Create(
-                    Guid.NewGuid(),
-                    i.IngredientName,
-                    i.WeightInGrams,
-                    i.Calories,
-                    i.Protein,
-                    i.Fat,
-                    i.Carbs).Value)
-                .ToList();
+            var ingredientIds = request.ExistingIngredientIds ?? new List<Guid>();
+            var newIngredients = request.NewIngredients ?? new List<IngredientRequest>();
 
-            var kebabResult = Kebab.Create(
+            await _kebabService.UpdateKebab(
                 id,
                 request.KebabName,
                 request.KebabDescription,
@@ -243,17 +225,10 @@ public class KebabController : ControllerBase
                 request.Stuffing,
                 request.Wrap,
                 request.IsAvailable,
-                image,
-                ingredients,
-                _nutritionCalculatorService);
-
-            if (kebabResult.IsFailure)
-            {
-                Log.Error("Kebab update failed: {Error}", kebabResult.Error);
-                return BadRequest(kebabResult.Error);
-            }
-
-            await _kebabService.UpdateKebab(kebabResult.Value, request.TitleImage?.FileName, request.TitleImage, _staticFilesPath);
+                fileName,
+                imagePath,
+                ingredientIds,
+                newIngredients);
 
             Log.Information("Kebab with Id: {Id} updated successfully", id);
             watch.Stop();
