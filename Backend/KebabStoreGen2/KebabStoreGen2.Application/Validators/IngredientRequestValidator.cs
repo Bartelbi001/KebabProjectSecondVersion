@@ -16,19 +16,19 @@ public class IngredientRequestValidator : AbstractValidator<IngredientRequest>
             .WithMessage("Weight must be greater than 0");
 
         RuleFor(request => request.Calories)
-            .GreaterThan(0)
+            .GreaterThanOrEqualTo(0)
             .WithMessage("Calories must be greater than 0");
 
         RuleFor(request => request.Protein)
-            .GreaterThan(0)
+            .GreaterThanOrEqualTo(0)
             .WithMessage("Protein must be greater than 0");
 
         RuleFor(request => request.Fat)
-            .GreaterThan(0)
+            .GreaterThanOrEqualTo(0)
             .WithMessage("Fat must be greater than 0");
 
         RuleFor(request => request.Carbs)
-            .GreaterThan(0)
+            .GreaterThanOrEqualTo(0)
             .WithMessage("Carbs must be greater than 0");
     }
 }
