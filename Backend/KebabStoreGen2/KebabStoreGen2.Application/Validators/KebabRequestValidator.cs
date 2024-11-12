@@ -19,7 +19,7 @@ public class KebabRequestValidator : AbstractValidator<KebabRequest>
             .MaximumLength(KebabConstants.MAX_KEBABDESCRIPTION_LENGTH)
             .WithMessage("Description is required and must be shorter than 100");
 
-        RuleFor(request => request.Price)
+        RuleFor(request => request.KebabPrice)
             .GreaterThanOrEqualTo(0)
             .WithMessage("Price is required and must be greater or equal to 0");
 

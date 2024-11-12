@@ -7,7 +7,7 @@ public class KebabEntity
     public Guid Id { get; set; }
     public string KebabName { get; set; } = string.Empty;
     public string KebabDescription { get; set; } = string.Empty;
-    public decimal Price { get; set; }
+    public decimal KebabPrice { get; set; }
     public StuffingCategory Stuffing { get; set; }
     public WrapCategory Wrap { get; set; }
     public bool IsAvailable { get; set; }

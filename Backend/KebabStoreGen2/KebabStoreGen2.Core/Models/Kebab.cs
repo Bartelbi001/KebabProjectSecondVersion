@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using KebabStoreGen2.Core.Abstractions;
 using KebabStoreGen2.Core.Constants;
 using KebabStoreGen2.Core.Models.Enums;
 
@@ -7,14 +6,14 @@ namespace KebabStoreGen2.Core.Models;
 
 public class Kebab
 {
-    private Kebab(Guid id, string name, string description, decimal price,
+    private Kebab(Guid id, string name, string description, decimal kebabPrice,
         StuffingCategory stuffing, WrapCategory wrap, bool isAvailable,
         Image? titleImage, List<Ingredient> ingredients, int calories)
     {
         Id = id;
         KebabName = name;
         KebabDescription = description;
-        Price = price;
+        KebabPrice = kebabPrice;
         Stuffing = stuffing;
         Wrap = wrap;
         IsAvailable = isAvailable;
@@ -26,7 +25,7 @@ public class Kebab
     public Guid Id { get; }
     public string KebabName { get; private set; } = string.Empty;
     public string KebabDescription { get; private set; } = string.Empty;
-    public decimal Price { get; private set; }
+    public decimal KebabPrice { get; private set; }
     public StuffingCategory Stuffing { get; private set; }
     public WrapCategory Wrap { get; private set; }
     public bool IsAvailable { get; private set; }
@@ -34,7 +33,7 @@ public class Kebab
     public List<Ingredient> Ingredients { get; private set; }
     public int Calories { get; private set; }
 
-    public static Result<Kebab> Create(Guid id, string kebabName, string kebabDescription, decimal price,
+    public static Result<Kebab> Create(Guid id, string kebabName, string kebabDescription, decimal kebabPrice,
         StuffingCategory stuffing, WrapCategory wrap, bool isAvailable,
         Image? titleImage, List<Ingredient> ingredients, INutritionCalculatorService calculateTotalCaloriesService)
     {
@@ -48,9 +47,9 @@ public class Kebab
             return Result.Failure<Kebab>($"'{nameof(kebabDescription)}' is required and must be shorter than {KebabConstants.MAX_KEBABDESCRIPTION_LENGTH}");
         }
 
-        if (price < 0)
+        if (kebabPrice < 0)
         {
-            return Result.Failure<Kebab>($"'{nameof(price)}' can't be negative");
+            return Result.Failure<Kebab>($"'{nameof(kebabPrice)}' can't be negative");
         }
 
         if (!Enum.IsDefined(typeof(StuffingCategory), stuffing))
@@ -82,7 +81,7 @@ public class Kebab
             return Result.Failure<Kebab>($"'{nameof(calculatedCalories)}' can't be negative");
         }
 
-        return Result.Success(new Kebab(id, kebabName, kebabDescription, price,
+        return Result.Success(new Kebab(id, kebabName, kebabDescription, kebabPrice,
             stuffing, wrap, isAvailable, titleImage, ingredients, calculatedCalories));
     }
 }

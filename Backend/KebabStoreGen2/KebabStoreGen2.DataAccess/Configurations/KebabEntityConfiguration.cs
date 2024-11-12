@@ -19,7 +19,7 @@ public class KebabEntityConfiguration : IEntityTypeConfiguration<KebabEntity>
             .IsRequired()
             .HasMaxLength(KebabConstants.MAX_KEBABDESCRIPTION_LENGTH);
 
-        builder.Property(k => k.Price)
+        builder.Property(k => k.KebabPrice)
             .IsRequired()
             .HasColumnType("decimal(18, 2)");
 

@@ -6,12 +6,12 @@ namespace KebabStoreGen2.Core.Abstractions;
 
 public interface IKebabService
 {
-    Task<Guid> CreateKebab(string kebabName, string kebabDescription, decimal price, StuffingCategory stuffing, WrapCategory wrap,
+    Task<Guid> CreateKebab(string kebabName, string kebabDescription, decimal kebabPrice, StuffingCategory stuffing, WrapCategory wrap,
         bool isAvailable, string? fileName, string? imagePath, List<Guid> existingIngredientIds,
         List<IngredientRequest> newIngredients);
     Task<Kebab> GetKebabById(Guid id);
     Task<List<Kebab>> GetAllKebabs();
-    Task UpdateKebab(Guid id, string kebabName, string kebabDescription, decimal price, StuffingCategory stuffing,
+    Task UpdateKebab(Guid id, string kebabName, string kebabDescription, decimal kebabPrice, StuffingCategory stuffing,
         WrapCategory wrap, bool isAvailable, string? fileName, string? imagePath,
         List<Guid> existingIngredientIds, List<IngredientRequest> newIngredients);
     Task<Guid> DeleteKebab(Guid id);

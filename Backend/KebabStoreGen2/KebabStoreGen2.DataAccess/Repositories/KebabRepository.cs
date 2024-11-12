@@ -63,7 +63,7 @@ public class KebabRepository : IKebabRepository
             Guid.NewGuid(),
             kebabEntity.KebabName,
             kebabEntity.KebabDescription,
-            kebabEntity.Price,
+            kebabEntity.KebabPrice,
             kebabEntity.Stuffing,
             kebabEntity.Wrap,
             kebabEntity.IsAvailable,

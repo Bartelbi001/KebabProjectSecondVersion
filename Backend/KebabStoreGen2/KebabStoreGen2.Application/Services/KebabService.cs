@@ -22,7 +22,7 @@ public class KebabService : IKebabService
         _imageService = imageService;
     }
 
-    public async Task<Guid> CreateKebab(string kebabName, string kebabDescription, decimal price, StuffingCategory stuffing, WrapCategory wrap,
+    public async Task<Guid> CreateKebab(string kebabName, string kebabDescription, decimal kebabPrice, StuffingCategory stuffing, WrapCategory wrap,
         bool isAvailable, string? fileName, string? imagePath, List<Guid> existingIngredientIds,
         List<IngredientRequest> newIngredients)
     {
@@ -102,7 +102,7 @@ public class KebabService : IKebabService
             Guid.NewGuid(),
             kebabName,
             kebabDescription,
-            price,
+            kebabPrice,
             stuffing,
             wrap,
             isAvailable,
@@ -120,7 +120,7 @@ public class KebabService : IKebabService
             Id = kebabResult.Value.Id,
             KebabName = kebabResult.Value.KebabName,
             KebabDescription = kebabResult.Value.KebabDescription,
-            Price = kebabResult.Value.Price,
+            KebabPrice = kebabResult.Value.KebabPrice,
             Stuffing = kebabResult.Value.Stuffing,
             Wrap = kebabResult.Value.Wrap,
             IsAvailable = kebabResult.Value.IsAvailable,
@@ -159,7 +159,7 @@ public class KebabService : IKebabService
             kebabEntity.Id,
             kebabEntity.KebabName,
             kebabEntity.KebabDescription,
-            kebabEntity.Price,
+            kebabEntity.KebabPrice,
             kebabEntity.Stuffing,
             kebabEntity.Wrap,
             kebabEntity.IsAvailable,
@@ -193,7 +193,7 @@ public class KebabService : IKebabService
                 kebabEntity.Id,
                 kebabEntity.KebabName,
                 kebabEntity.KebabDescription,
-                kebabEntity.Price,
+                kebabEntity.KebabPrice,
                 kebabEntity.Stuffing,
                 kebabEntity.Wrap,
                 kebabEntity.IsAvailable,
@@ -203,7 +203,7 @@ public class KebabService : IKebabService
         }).ToList();
     }
 
-    public async Task UpdateKebab(Guid id, string kebabName, string kebabDescription, decimal price, StuffingCategory stuffing,
+    public async Task UpdateKebab(Guid id, string kebabName, string kebabDescription, decimal kebabPrice, StuffingCategory stuffing,
         WrapCategory wrap, bool isAvailable, string? fileName, string? imagePath,
         List<Guid> existingIngredientIds, List<IngredientRequest> newIngredients)
     {
@@ -289,7 +289,7 @@ public class KebabService : IKebabService
             kebabEntity.Id,
             kebabName,
             kebabDescription,
-            price,
+            kebabPrice,
             stuffing,
             wrap,
             isAvailable,
@@ -303,7 +303,7 @@ public class KebabService : IKebabService
 
         kebabEntity.KebabName = kebabResult.Value.KebabName;
         kebabEntity.KebabDescription = kebabResult.Value.KebabDescription;
-        kebabEntity.Price = kebabResult.Value.Price;
+        kebabEntity.KebabPrice = kebabResult.Value.KebabPrice;
         kebabEntity.Stuffing = kebabResult.Value.Stuffing;
         kebabEntity.Wrap = kebabResult.Value.Wrap;
         kebabEntity.IsAvailable = kebabResult.Value.IsAvailable;

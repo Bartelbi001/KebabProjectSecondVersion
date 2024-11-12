@@ -6,7 +6,7 @@ public record KebabResponse(
     Guid id,
     string KebabName,
     string KebabDescription,
-    decimal Price,
+    decimal KebabPrice,
     StuffingCategory Stuffing,
     WrapCategory Wrap,
     bool IsAvailable,

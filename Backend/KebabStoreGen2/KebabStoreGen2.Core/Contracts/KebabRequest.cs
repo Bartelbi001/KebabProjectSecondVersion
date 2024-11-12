@@ -8,7 +8,7 @@ namespace KebabStoreGen2.Core.Contracts;
 public record KebabRequest(
     [Required][MaxLength(KebabConstants.MAX_KEBABNAME_LENGTH)] string KebabName,
     [Required][MaxLength(KebabConstants.MAX_KEBABDESCRIPTION_LENGTH)] string KebabDescription,
-    [Required] decimal Price,
+    [Required] decimal KebabPrice,
     [Required] StuffingCategory Stuffing,
     [Required] WrapCategory Wrap,
     [Required] bool IsAvailable,
