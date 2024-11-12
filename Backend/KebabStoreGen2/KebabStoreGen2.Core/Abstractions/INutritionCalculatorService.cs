@@ -2,7 +2,12 @@
 
 namespace KebabStoreGen2.Core.Abstractions;
 
-public interface INutritionCalculatorService
+public interface NutritionAndWeightCalculatorService
 {
-    int CalculateTotalCalories(List<Ingredient> ingredients);
+    int CalculateTotalWeight(List<int> weights);
+    decimal CalculateTotalCalories(List<Ingredient> ingredients, List<int> weights);
+    decimal CalculateTotalProtein(List<Ingredient> ingredients, List<int> weights);
+    decimal CalculateTotalFat(List<Ingredient> ingredients, List<int> weights);
+    decimal CalculateTotalCarbs(List<Ingredient> ingredients, List<int> weights);
+    decimal CalculateTotalSugar(List<Ingredient> ingredients, List<int> weights);
 }
