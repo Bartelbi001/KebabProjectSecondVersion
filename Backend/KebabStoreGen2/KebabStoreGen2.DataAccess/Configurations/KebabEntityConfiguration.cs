@@ -9,7 +9,13 @@ public class KebabEntityConfiguration : IEntityTypeConfiguration<KebabEntity>
 {
     public void Configure(EntityTypeBuilder<KebabEntity> builder)
     {
+        builder.ToTable("Kebabs");
+
         builder.HasKey(x => x.Id);
+
+        builder.Property(i => i.Id)
+            .IsRequired()
+            .ValueGeneratedOnAdd();
 
         builder.Property(k => k.KebabName)
             .IsRequired()

@@ -39,11 +39,13 @@ public class IngredientController : ControllerBase
             var ingredientResult = Ingredient.Create(
                 Guid.NewGuid(),
                 request.IngredientName,
-                request.WeightInGrams,
-                request.Calories,
-                request.Protein,
-                request.Fat,
-                request.Carbs);
+                request.CaloriesPer100g,
+                request.ProteinPer100g,
+                request.FatPer100g,
+                request.CarbsPer100g,
+                request.SugarPer100g ?? 0,
+                request.ContainsLactose ?? false
+            );
             if (ingredientResult.IsFailure)
             {
                 Log.Error("Ingredient creation failed: {Error}", ingredientResult.Error);
@@ -55,7 +57,8 @@ public class IngredientController : ControllerBase
             Log.Information("Ingredient created successfully with ID: {IngredientId} and Name: {Name}", ingredientId, request.IngredientName);
             watch.Stop();
             Log.Information("Completed request to create an ingredient by Id in {ElapsedMilliseconds}ms", watch.ElapsedMilliseconds);
-            return Ok(new { Message = "Ingredient created successfully", Id = ingredientId, request.IngredientName });
+            return CreatedAtAction(nameof(GetIngredientById), new { id = ingredientId }, new { id = ingredientId });
+            //return Ok(new { Message = "Ingredient created successfully", Id = ingredientId, request.IngredientName });
         }
         catch (Exception ex)
         {
@@ -82,11 +85,13 @@ public class IngredientController : ControllerBase
             var response = ingredients.Select(i => new IngredientResponse(
                 i.Id,
                 i.IngredientName,
-                i.WeightInGrams,
-                i.Calories,
-                i.Protein,
-                i.Fat,
-                i.Carbs)).ToList();
+                i.CaloriesPer100g,
+                i.ProteinPer100g,
+                i.FatPer100g,
+                i.CarbsPer100g,
+                i.SugarPer100g,
+                i.ContainsLactose
+            )).ToList();
 
             Log.Information("Successfully retrieved {IngredientCount} ingredients from the database", response.Count);
             watch.Stop();
@@ -118,11 +123,13 @@ public class IngredientController : ControllerBase
             var response = new IngredientResponse(
                 ingredient.Id,
                 ingredient.IngredientName,
-                ingredient.WeightInGrams,
-                ingredient.Calories,
-                ingredient.Protein,
-                ingredient.Fat,
-                ingredient.Carbs);
+                ingredient.CaloriesPer100g,
+                ingredient.ProteinPer100g,
+                ingredient.FatPer100g,
+                ingredient.CarbsPer100g,
+                ingredient.SugarPer100g,
+                ingredient.ContainsLactose
+            );
 
             Log.Information("Successfully retrieved ingredient with Id: {Id} and Name: {IngredientName} from the database", id, ingredient.IngredientName);
             watch.Stop();
@@ -159,11 +166,13 @@ public class IngredientController : ControllerBase
             await _ingredientService.UpdateIngredient(
                 id,
                 request.IngredientName,
-                request.WeightInGrams,
-                request.Calories,
-                request.Protein,
-                request.Fat,
-                request.Carbs);
+                request.CaloriesPer100g,
+                request.ProteinPer100g,
+                request.FatPer100g,
+                request.CarbsPer100g,
+                request.SugarPer100g ?? 0,
+                request.ContainsLactose ?? false
+            );
 
             Log.Information("Ingredient with Id: {Id} updated successfully", id);
             watch.Stop();

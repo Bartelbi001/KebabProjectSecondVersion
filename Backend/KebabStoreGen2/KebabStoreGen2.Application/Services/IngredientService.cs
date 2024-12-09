@@ -19,14 +19,16 @@ public class IngredientService : IIngredientService
         {
             Id = ingredient.Id,
             IngredientName = ingredient.IngredientName,
-            WeightInGrams = ingredient.WeightInGrams,
-            Calories = ingredient.Calories,
-            Protein = ingredient.Protein,
-            Fat = ingredient.Fat,
-            Carbs = ingredient.Carbs,
+            CaloriesPer100g = ingredient.CaloriesPer100g,
+            ProteinPer100g = ingredient.ProteinPer100g,
+            FatPer100g = ingredient.FatPer100g,
+            CarbsPer100g = ingredient.CarbsPer100g,
+            SugarPer100g = ingredient.SugarPer100g,
+            ContainsLactose = ingredient.ContainsLactose
         };
 
-        return await _ingredientRepository.Create(ingredientEntity);
+        await _ingredientRepository.Create(ingredientEntity);
+        return ingredient.Id;
     }
 
     public async Task<Ingredient> GetIngredientById(Guid id)
@@ -34,47 +36,71 @@ public class IngredientService : IIngredientService
         var ingredientEntity = await _ingredientRepository.GetById(id);
         if (ingredientEntity == null)
         {
-            throw new KeyNotFoundException("Ingredient not found");
+            throw new KeyNotFoundException($"Ingredient with id {id} not found");
         }
 
-        return Ingredient.Create(
+        var ingredientResult = Ingredient.Create(
             ingredientEntity.Id,
             ingredientEntity.IngredientName,
-            ingredientEntity.WeightInGrams,
-            ingredientEntity.Calories,
-            ingredientEntity.Protein,
-            ingredientEntity.Fat,
-            ingredientEntity.Carbs).Value;
+            ingredientEntity.CaloriesPer100g,
+            ingredientEntity.ProteinPer100g,
+            ingredientEntity.FatPer100g,
+            ingredientEntity.CarbsPer100g,
+            ingredientEntity.SugarPer100g ?? 0,
+            ingredientEntity.ContainsLactose ?? false
+            );
+
+        if (ingredientResult.IsFailure)
+        {
+            throw new InvalidOperationException(ingredientResult.Error);
+        }
+
+        return ingredientResult.Value;
     }
 
     public async Task<List<Ingredient>> GetAllIngredients()
     {
         var ingredientEntities = await _ingredientRepository.GetAll();
-        return ingredientEntities.Select(ie => Ingredient.Create(
-            ie.Id,
-            ie.IngredientName,
-            ie.WeightInGrams,
-            ie.Calories,
-            ie.Protein,
-            ie.Fat,
-            ie.Carbs).Value).ToList();
+        var ingredients = ingredientEntities.Select(entity =>
+        {
+            var result = Ingredient.Create(
+                entity.Id,
+                entity.IngredientName,
+                entity.CaloriesPer100g,
+                entity.ProteinPer100g,
+                entity.FatPer100g,
+                entity.CarbsPer100g,
+                entity.SugarPer100g ?? 0,
+                entity.ContainsLactose ?? false
+            );
+
+            if (result.IsFailure)
+            {
+                throw new InvalidOperationException(result.Error);
+            }
+
+            return result.Value;
+        }).ToList();
+
+        return ingredients;
     }
 
-    public async Task UpdateIngredient(Guid id, string ingredientName, int weightInGrams, int calories,
-        int protein, int fat, int carbs)
+    public async Task UpdateIngredient(Guid id, string ingredientName, decimal caloriesPer100g, decimal proteinPer100g,
+        decimal fatPer100g, decimal carbsPer100g, decimal? sugarPer100g, bool? containsLactose)
     {
         var ingredientEntity = await _ingredientRepository.GetById(id);
         if (ingredientEntity == null)
         {
-            throw new KeyNotFoundException("Ingredient not found");
+            throw new KeyNotFoundException($"Ingredient with id {id} not found");
         }
 
         ingredientEntity.IngredientName = ingredientName;
-        ingredientEntity.WeightInGrams = weightInGrams;
-        ingredientEntity.Calories = calories;
-        ingredientEntity.Protein = protein;
-        ingredientEntity.Fat = fat;
-        ingredientEntity.Carbs = carbs;
+        ingredientEntity.CaloriesPer100g = caloriesPer100g;
+        ingredientEntity.ProteinPer100g = proteinPer100g;
+        ingredientEntity.FatPer100g = fatPer100g;
+        ingredientEntity.CarbsPer100g = carbsPer100g;
+        ingredientEntity.SugarPer100g = sugarPer100g ?? 0;
+        ingredientEntity.ContainsLactose = containsLactose ?? false;
 
         await _ingredientRepository.Update(ingredientEntity);
     }
@@ -84,10 +110,10 @@ public class IngredientService : IIngredientService
         var ingredientEntity = await _ingredientRepository.GetById(id);
         if (ingredientEntity == null)
         {
-            throw new KeyNotFoundException("Ingredient not found");
+            throw new KeyNotFoundException($"Ingredient with id {id} not found");
         }
 
         await _ingredientRepository.Delete(id);
-        return id;
+        return ingredientEntity.Id;
     }
 }

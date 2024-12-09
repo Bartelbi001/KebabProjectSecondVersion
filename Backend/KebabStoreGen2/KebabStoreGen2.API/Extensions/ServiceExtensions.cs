@@ -21,7 +21,7 @@ namespace KebabStoreGen2.API.Extensions
             services.AddScoped<IIngredientService, IngredientService>();
             services.AddScoped<IIngredientRepository, IngredientRepository>();
             services.AddScoped<IImageService, ImageService>();
-            services.AddScoped<INutritionCalculatorService, CalculateTotalCaloriesService>();
+            services.AddScoped<NutritionAndWeightCalculatorService, CalculateTotalNutritionsService>();
         }
     }
 }

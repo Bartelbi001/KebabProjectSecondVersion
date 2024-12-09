@@ -10,7 +10,7 @@ using System.Diagnostics;
 namespace KebabStoreGen2.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class KebabController : ControllerBase
 {
     private readonly string _staticFilesPath =

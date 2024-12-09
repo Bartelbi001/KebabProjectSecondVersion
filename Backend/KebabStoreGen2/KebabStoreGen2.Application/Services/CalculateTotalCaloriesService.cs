@@ -31,6 +31,6 @@ public class CalculateTotalNutritionsService : NutritionAndWeightCalculatorServi
 
     public decimal CalculateTotalSugar(List<Ingredient> ingredients, List<int> weights)
     {
-        return ingredients.Zip(weights, (ingredient, weight) => (ingredient.SugarPer100g * weight) / 100).Sum();
+        return ingredients.Zip(weights, (ingredient, weight) => ((ingredient.SugarPer100g ?? 0) * weight) / 100).Sum();
     }
 }

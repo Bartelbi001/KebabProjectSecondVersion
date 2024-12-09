@@ -3,8 +3,10 @@
 public record IngredientResponse(
     Guid id,
     string IngredientName,
-    int WeightInGrams,
-    int Calories,
-    int Protein,
-    int Fat,
-    int Carbs);
+    decimal CaloriesPer100g,
+    decimal ProteinPer100g,
+    decimal FatPer100g,
+    decimal CarbsPer100g,
+    decimal? SugarPer100g = null,
+    bool? ContainsLactose = null
+);

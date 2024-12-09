@@ -11,24 +11,20 @@ public class IngredientRequestValidator : AbstractValidator<IngredientRequest>
             .NotEmpty()
             .WithMessage("Ingredient name is required");
 
-        RuleFor(request => request.WeightInGrams)
-            .GreaterThan(0)
-            .WithMessage("Weight must be greater than 0");
-
-        RuleFor(request => request.Calories)
+        RuleFor(request => request.CaloriesPer100g)
             .GreaterThanOrEqualTo(0)
-            .WithMessage("Calories must be greater than 0");
+            .WithMessage("Calories per 100g must be greater than or equal to 0");
 
-        RuleFor(request => request.Protein)
+        RuleFor(request => request.ProteinPer100g)
             .GreaterThanOrEqualTo(0)
-            .WithMessage("Protein must be greater than 0");
+            .WithMessage("\"Protein per 100g must be greater than or equal to 0");
 
-        RuleFor(request => request.Fat)
+        RuleFor(request => request.FatPer100g)
             .GreaterThanOrEqualTo(0)
-            .WithMessage("Fat must be greater than 0");
+            .WithMessage("Fat per 100g must be greater than or equal to 0");
 
-        RuleFor(request => request.Carbs)
+        RuleFor(request => request.CarbsPer100g)
             .GreaterThanOrEqualTo(0)
-            .WithMessage("Carbs must be greater than 0");
+            .WithMessage("Carbs per 100g must be greater than or equal to 0");
     }
 }

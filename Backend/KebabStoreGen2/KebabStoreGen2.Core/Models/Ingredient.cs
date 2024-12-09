@@ -24,8 +24,8 @@ public class Ingredient
     public decimal ProteinPer100g { get; private set; }
     public decimal FatPer100g { get; private set; }
     public decimal CarbsPer100g { get; private set; }
-    public decimal SugarPer100g { get; private set; }
-    public bool ContainsLactose { get; private set; }
+    public decimal? SugarPer100g { get; private set; }
+    public bool? ContainsLactose { get; private set; }
 
     public static Result<Ingredient> Create(Guid id, string ingredientName, decimal caloriesPer100g, decimal proteinPer100g, decimal fatPer100g,
         decimal carbsPer100g, decimal sugarPer100g, bool containsLactose)
