@@ -3,7 +3,7 @@ using KebabStoreGen2.Core.Models;
 
 namespace KebabStoreGen2.Application.Services;
 
-public class CalculateTotalNutritionsService : NutritionAndWeightCalculatorService
+public class NutritionAndWeightCalculatorService : INutritionAndWeightCalculatorService
 {
     public int CalculateTotalWeight(List<int> weights)
     {
