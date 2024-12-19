@@ -25,7 +25,9 @@ public class IngredientRepository : IIngredientRepository
 
     public async Task<IngredientEntity> GetById(Guid id)
     {
-        return await _context.IngredientEntities.FindAsync(id);
+        return await _context.IngredientEntities
+            .AsNoTracking()
+            .FirstOrDefaultAsync(i => i.Id == id);
     }
 
     public async Task<List<IngredientEntity>> GetAll()
@@ -49,7 +51,10 @@ public class IngredientRepository : IIngredientRepository
 
     public async Task<Guid> Delete(Guid id)
     {
-        var ingredientEntity = await _context.IngredientEntities.FindAsync(id);
+        var ingredientEntity = await _context.IngredientEntities
+            .AsNoTracking()
+            .FirstOrDefaultAsync(i => i.Id == id);
+
         if (ingredientEntity == null)
         {
             throw new KeyNotFoundException("Ingredient not found");

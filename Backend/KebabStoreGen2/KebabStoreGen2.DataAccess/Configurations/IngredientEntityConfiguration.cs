@@ -42,5 +42,10 @@ public class IngredientEntityConfiguration : IEntityTypeConfiguration<Ingredient
 
         builder.Property(i => i.ContainsLactose)
             .HasColumnType("bit");
+
+        builder.HasMany(i => i.KebabIngredients)
+            .WithOne(ki => ki.Ingredient)
+            .HasForeignKey(ki => ki.IngredientId)
+            .IsRequired();
     }
 }

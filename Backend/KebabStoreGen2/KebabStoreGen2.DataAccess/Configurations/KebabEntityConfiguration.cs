@@ -35,9 +35,13 @@ public class KebabEntityConfiguration : IEntityTypeConfiguration<KebabEntity>
         builder.Property(k => k.Wrap)
             .IsRequired();
 
-        builder.HasMany(k => k.Ingredients)
-            .WithOne()
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(k => k.IsAvailable)
+            .IsRequired();
+
+        builder.HasMany(k => k.KebabIngredients)
+            .WithOne(ki => ki.Kebab)
+            .HasForeignKey(ki => ki.KebabId)
+            .IsRequired();
 
         builder.Property(k => k.TotalWeight)
             .IsRequired();
