@@ -13,5 +13,9 @@ public class KebabEntity
     public bool IsAvailable { get; set; }
     public string? TitleImagePath { get; set; } // Используем строку для пути к изображению
     public List<IngredientEntity>? Ingredients { get; set; }
-    public int Calories { get; set; }
+    public int TotalWeight { get; set; }
+    public decimal TotalCalories { get; set; }
+    public decimal TotalCarbs { get; set; }
+    public decimal TotalFat { get; set; }
+    public decimal TotalProtein { get; set; }
 }

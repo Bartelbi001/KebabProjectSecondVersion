@@ -35,11 +35,27 @@ public class KebabEntityConfiguration : IEntityTypeConfiguration<KebabEntity>
         builder.Property(k => k.Wrap)
             .IsRequired();
 
-        builder.Property(k => k.Calories)
-            .IsRequired();
-
         builder.HasMany(k => k.Ingredients)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(k => k.TotalWeight)
+            .IsRequired();
+
+        builder.Property(k => k.TotalCalories)
+            .IsRequired()
+            .HasColumnType("decimal(18, 2)");
+
+        builder.Property(k => k.TotalCarbs)
+            .IsRequired()
+            .HasColumnType("decimal(18, 2)");
+
+        builder.Property(k => k.TotalFat)
+            .IsRequired()
+            .HasColumnType("decimal(18, 2)");
+
+        builder.Property(k => k.TotalProtein)
+            .IsRequired()
+            .HasColumnType("decimal(18, 2)");
     }
 }
