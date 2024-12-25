@@ -4,14 +4,18 @@ using KebabStoreGen2.Core.Contracts;
 
 namespace KebabStoreGen2.Application.Validators;
 
-public class IngredientRequestValidator : AbstractValidator<IngredientRequest>
+public class KebabIngredientRequestValidator : AbstractValidator<KebabIngredientRequest>
 {
-    public IngredientRequestValidator()
+    public KebabIngredientRequestValidator()
     {
         RuleFor(request => request.IngredientName)
-            .NotEmpty()
+             .NotEmpty()
             .MaximumLength(IngredientConstants.MAX_INGREDIENTNAME_LENGTH)
             .WithMessage("Name is required and must be shorter than 16");
+
+        RuleFor(request => request.Weight)
+            .GreaterThan(0)
+            .WithMessage("Weight must be greater than 0");
 
         RuleFor(request => request.CaloriesPer100g)
             .GreaterThanOrEqualTo(0)
@@ -19,7 +23,7 @@ public class IngredientRequestValidator : AbstractValidator<IngredientRequest>
 
         RuleFor(request => request.ProteinPer100g)
             .GreaterThanOrEqualTo(0)
-            .WithMessage("\"Protein per 100g must be greater than or equal to 0");
+            .WithMessage("Protein per 100g must be greater than or equal to 0");
 
         RuleFor(request => request.FatPer100g)
             .GreaterThanOrEqualTo(0)

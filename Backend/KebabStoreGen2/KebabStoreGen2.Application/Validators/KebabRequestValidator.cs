@@ -43,12 +43,8 @@ public class KebabRequestValidator : AbstractValidator<KebabRequest>
             .Must(contentType => contentType == "image/jpeg" || contentType == "image/png")
             .WithMessage("Title image must be a JPEG or PNG");
 
-        RuleForEach(request => request.ExistingIngredientIds)
-            .NotEmpty()
-            .WithMessage("Existing ingredient ID is required");
-
-        RuleForEach(request => request.NewIngredients)
-                .SetValidator(new IngredientRequestValidator())
-                .When(request => request.NewIngredients != null);
+        RuleForEach(request => request.Ingredients)
+            .SetValidator(new KebabIngredientRequestValidator())
+            .When(request => request.Ingredients != null);
     }
 }
