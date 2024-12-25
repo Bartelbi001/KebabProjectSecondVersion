@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using KebabStoreGen2.Core.Constants;
+using System.ComponentModel.DataAnnotations;
 
 namespace KebabStoreGen2.Core.Contracts;
 
@@ -7,6 +8,7 @@ public class KebabIngredientRequest
     public Guid? Id { get; set; } // Опционально для существующих и новых ингредиентов
 
     [Required]
+    [MaxLength(IngredientConstants.MAX_INGREDIENTNAME_LENGTH)]
     public string IngredientName { get; set; } = string.Empty;
 
     [Required]
