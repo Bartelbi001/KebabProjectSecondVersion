@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Backend/KebabStoreGen2/KebabStoreGen2.API/appsettings.Development.json
+
+Credentials/
