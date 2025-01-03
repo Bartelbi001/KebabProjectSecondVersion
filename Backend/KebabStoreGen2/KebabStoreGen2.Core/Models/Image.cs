@@ -4,6 +4,8 @@ namespace KebabStoreGen2.Core.Models;
 
 public class Image
 {
+    public Image() { }
+
     private Image(string fileName, string path)
     {
         FileName = fileName;
