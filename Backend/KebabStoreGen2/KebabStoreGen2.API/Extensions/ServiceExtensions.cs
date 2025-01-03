@@ -16,6 +16,7 @@ namespace KebabStoreGen2.API.Extensions
                 options.UseSqlServer(configuration.GetConnectionString(nameof(KebabStoreGen2DbContext)));
             });
 
+            services.AddTransient<IGoogleDriveService, GoogleDriveService>();
             services.AddScoped<IKebabService, KebabService>();
             services.AddScoped<IKebabRepository, KebabRepository>();
             services.AddScoped<IIngredientService, IngredientService>();
