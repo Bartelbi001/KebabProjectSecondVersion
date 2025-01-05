@@ -9,25 +9,19 @@ public class KebabRequest
 {
     public Guid Id { get; set; }
 
-    [Required]
     [MaxLength(KebabConstants.MAX_KEBABNAME_LENGTH)]
-    public string KebabName { get; set; } = string.Empty;
+    public required string KebabName { get; set; } = string.Empty;
 
-    [Required]
     [MaxLength(KebabConstants.MAX_KEBABDESCRIPTION_LENGTH)]
-    public string KebabDescription { get; set; } = string.Empty;
+    public required string KebabDescription { get; set; } = string.Empty;
 
-    [Required]
-    public decimal KebabPrice { get; set; }
+    public required decimal KebabPrice { get; set; }
 
-    [Required]
-    public StuffingCategory Stuffing { get; set; }
+    public required StuffingCategory Stuffing { get; set; }
 
-    [Required]
-    public WrapCategory Wrap { get; set; }
+    public required WrapCategory Wrap { get; set; }
 
-    [Required]
-    public bool IsAvailable { get; set; }
+    public required bool IsAvailable { get; set; }
 
     public IFormFile? TitleImage { get; set; }
 
