@@ -3,6 +3,7 @@ using KebabStoreGen2.Core.Contracts;
 using KebabStoreGen2.Core.Models;
 using KebabStoreGen2.Core.Models.Enums;
 using KebabStoreGen2.DataAccess.Entities;
+using System.Data;
 
 namespace KebabStoreGen2.Application.Services;
 
@@ -10,126 +11,114 @@ public class KebabService : IKebabService
 {
     private readonly IKebabRepository _kebabRepository;
     private readonly IIngredientRepository _ingredientRepository;
-    private readonly INutritionCalculatorService _nutritionCalculatorService;
+    private readonly IGoogleDriveService _googleDriveService;
+    private readonly INutritionAndWeightCalculatorService _nutritionAndWeightCalculatorService;
     private readonly IImageService _imageService;
 
-    public KebabService(IKebabRepository kebabRepository, IIngredientRepository ingredientRepository,
-        INutritionCalculatorService nutritionCalculatorService, IImageService imageService)
+    public KebabService(IKebabRepository kebabRepository, IIngredientRepository ingredientRepository, IGoogleDriveService googleDriveService,
+        INutritionAndWeightCalculatorService nutritionAndWeightCalculatorService, IImageService imageService)
     {
         _kebabRepository = kebabRepository;
         _ingredientRepository = ingredientRepository;
-        _nutritionCalculatorService = nutritionCalculatorService;
+        _googleDriveService = googleDriveService;
+        _nutritionAndWeightCalculatorService = nutritionAndWeightCalculatorService;
         _imageService = imageService;
     }
 
-    public async Task<Guid> CreateKebab(string kebabName, string kebabDescription, decimal kebabPrice, StuffingCategory stuffing, WrapCategory wrap,
-        bool isAvailable, string? fileName, string? imagePath, List<Guid> existingIngredientIds,
-        List<IngredientRequest> newIngredients)
+    public async Task<Guid> CreateKebab(KebabRequest kebabRequest)
     {
-        var ingredientEntities = new List<IngredientEntity>();
+        var imageResult = await _googleDriveService.CreateImage(kebabRequest.TitleImage, kebabRequest.KebabName);
+        if (imageResult.IsFailure)
+        {
+            throw new InvalidOperationException(imageResult.Error);
+        }
+
         var ingredients = new List<Ingredient>();
+        var weights = new List<int>();
 
-        if (existingIngredientIds != null && existingIngredientIds.Any())
+        foreach (var kebabIngredientRequest in kebabRequest.Ingredients)
         {
-            var existingIngredients = await _ingredientRepository.GetAll();
-            foreach (var entity in existingIngredients.Where(i => existingIngredientIds.Contains(i.Id)))
+            Ingredient ingredientEntity;
+            if (kebabIngredientRequest.Id.HasValue)
             {
-                var ingredientResult = Ingredient.Create(
-                    entity.Id,
-                    entity.IngredientName,
-                    entity.WeightInGrams,
-                    entity.Calories,
-                    entity.Protein,
-                    entity.Fat,
-                    entity.Carbs);
-
-                if (ingredientResult.IsSuccess)
+                var ingredientEntityFromDb = await _ingredientRepository.GetById(kebabIngredientRequest.Id.Value);
+                if (ingredientEntityFromDb == null)
                 {
-                    ingredients.Add(ingredientResult.Value);
-                    ingredientEntities.Add(entity);
+                    throw new KeyNotFoundException($"Ingredient with id {kebabIngredientRequest.Id} not found");
                 }
-            }
-        }
 
-        if (newIngredients != null && newIngredients.Any())
-        {
-            foreach (var ingredientRequest in newIngredients)
-            {
-                var ingredientResult = Ingredient.Create(
-                    Guid.NewGuid(),
-                    ingredientRequest.IngredientName,
-                    ingredientRequest.WeightInGrams,
-                    ingredientRequest.Calories,
-                    ingredientRequest.Protein,
-                    ingredientRequest.Fat,
-                    ingredientRequest.Carbs);
-
-                if (ingredientResult.IsSuccess)
-                {
-                    var ingredientEntity = new IngredientEntity
-                    {
-                        Id = ingredientResult.Value.Id,
-                        IngredientName = ingredientResult.Value.IngredientName,
-                        WeightInGrams = ingredientResult.Value.WeightInGrams,
-                        Calories = ingredientResult.Value.Calories,
-                        Protein = ingredientResult.Value.Protein,
-                        Fat = ingredientResult.Value.Fat,
-                        Carbs = ingredientResult.Value.Carbs,
-                    };
-
-                    await _ingredientRepository.Create(ingredientEntity);
-                    ingredientEntities.Add(ingredientEntity);
-                    ingredients.Add(ingredientResult.Value);
-                }
-            }
-        }
-
-        Image? image = null;
-        if (image != null && fileName != null)
-        {
-            var imageResult = Image.Create(fileName, imagePath);
-            if (imageResult.IsSuccess)
-            {
-                image = imageResult.Value;
+                ingredientEntity = Ingredient.Create(
+                    ingredientEntityFromDb.Id,
+                    ingredientEntityFromDb.IngredientName,
+                    ingredientEntityFromDb.CaloriesPer100g,
+                    ingredientEntityFromDb.ProteinPer100g,
+                    ingredientEntityFromDb.FatPer100g,
+                    ingredientEntityFromDb.CarbsPer100g,
+                    ingredientEntityFromDb.SugarPer100g ?? 0,
+                    ingredientEntityFromDb.ContainsLactose ?? false
+                ).Value;
             }
             else
             {
-                throw new InvalidOperationException(imageResult.Error);
+                var ingredientResult = Ingredient.Create(
+                    Guid.NewGuid(),
+                    kebabIngredientRequest.IngredientName,
+                    kebabIngredientRequest.CaloriesPer100g,
+                    kebabIngredientRequest.ProteinPer100g,
+                    kebabIngredientRequest.FatPer100g,
+                    kebabIngredientRequest.CarbsPer100g,
+                    kebabIngredientRequest.SugarPer100g ?? 0,
+                    kebabIngredientRequest.ContainsLactose ?? false
+                );
+
+                if (ingredientResult.IsFailure)
+                {
+                    throw new InvalidOperationException(ingredientResult.Error);
+                }
+
+                ingredientEntity = ingredientResult.Value;
+                await _ingredientRepository.Create(new IngredientEntity
+                {
+                    Id = ingredientEntity.Id,
+                    IngredientName = ingredientEntity.IngredientName,
+                    CaloriesPer100g = ingredientEntity.CaloriesPer100g,
+                    ProteinPer100g = ingredientEntity.ProteinPer100g,
+                    FatPer100g = ingredientEntity.FatPer100g,
+                    CarbsPer100g = ingredientEntity.CarbsPer100g,
+                    SugarPer100g = ingredientEntity.SugarPer100g,
+                    ContainsLactose = ingredientEntity.ContainsLactose
+                });
             }
+
+            ingredients.Add(ingredientEntity);
+            weights.Add(kebabIngredientRequest.Weight);
         }
+
+        var image = Image.Create(kebabRequest.TitleImage.FileName, imageResult.Value.Path).Value;
 
         var kebabResult = Kebab.Create(
             Guid.NewGuid(),
-            kebabName,
-            kebabDescription,
-            kebabPrice,
-            stuffing,
-            wrap,
-            isAvailable,
+            kebabRequest.KebabName,
+            kebabRequest.KebabDescription,
+            kebabRequest.KebabPrice,
+            kebabRequest.Stuffing,
+            kebabRequest.Wrap,
+            kebabRequest.IsAvailable,
             image,
             ingredients,
-            _nutritionCalculatorService);
+            _nutritionAndWeightCalculatorService,
+            weights
+        );
 
         if (kebabResult.IsFailure)
         {
             throw new InvalidOperationException(kebabResult.Error);
         }
 
-        var kebabEntity = new KebabEntity
-        {
-            Id = kebabResult.Value.Id,
-            KebabName = kebabResult.Value.KebabName,
-            KebabDescription = kebabResult.Value.KebabDescription,
-            KebabPrice = kebabResult.Value.KebabPrice,
-            Stuffing = kebabResult.Value.Stuffing,
-            Wrap = kebabResult.Value.Wrap,
-            IsAvailable = kebabResult.Value.IsAvailable,
-            Ingredients = ingredientEntities,
-            Calories = kebabResult.Value.Calories,
-            TitleImagePath = kebabResult.Value.TitleImage?.Path,
-        };
+        var kebabEntity = kebabResult.Value;
 
-        return await _kebabRepository.Create(kebabEntity);
+        await _kebabRepository.Create(kebabEntity);
+        return kebabEntity.Id;
     }
 
     public async Task<Kebab> GetKebabById(Guid id)
