@@ -8,6 +8,6 @@
         public Guid IngredientId { get; set; }
         public IngredientEntity Ingredient { get; set; } = null!;
 
-        public int Weight { get; set; } // Вус конкретного ингредиента в данном кебабе
+        public int Weight { get; set; } // Вес конкретного ингредиента в данном кебабе
     }
 }
