@@ -10,5 +10,4 @@ public class IngredientDto
     public decimal CarbsPer100g { get; set; }
     public decimal? SugarPer100g { get; set; }
     public bool? ContainsLactose { get; set; }
-    public int Weight { get; set; }
 }
