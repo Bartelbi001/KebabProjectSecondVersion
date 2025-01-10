@@ -2,11 +2,17 @@
 using KebabStoreGen2.Application.DTOsp;
 using KebabStoreGen2.Core.Abstractions;
 using KebabStoreGen2.Core.Models;
+using KebabStoreGen2.DataAccess.LinkingModels;
 
 namespace KebabStoreGen2.Application.Services.Mappers;
 
 public class KebabDtoMapper : IMapper<Kebab, KebabDto>, IMapper<KebabDto, Kebab>
 {
+    private readonly IMapper<KebabIngredient, KebabIngredientDto> _kebabIngredientMapper;
+    public KebabDtoMapper(IMapper<KebabIngredient, KebabIngredientDto> kebabIngredientMapper)
+    {
+        _kebabIngredientMapper = kebabIngredientMapper;
+    }
     public KebabDto Map(Kebab kebab)
     {
         return new KebabDto
@@ -19,38 +25,17 @@ public class KebabDtoMapper : IMapper<Kebab, KebabDto>, IMapper<KebabDto, Kebab>
             Wrap = kebab.Wrap,
             IsAvailable = kebab.IsAvailable,
             TitleImage = new ImageDto { FileName = kebab.TitleImage.FileName, Path = kebab.TitleImage.Path },
-            Ingredients = kebab.Ingredients.Select(ingredient => new IngredientDto
-            {
-                Id = ingredient.Id,
-                IngredientName = ingredient.IngredientName,
-                CaloriesPer100g = ingredient.CaloriesPer100g,
-                ProteinPer100g = ingredient.FatPer100g,
-                FatPer100g = ingredient.FatPer100g,
-                CarbsPer100g = ingredient.CarbsPer100g,
-                SugarPer100g = ingredient.SugarPer100g,
-                ContainsLactose = ingredient.ContainsLactose
-            }).ToList(),
+            Ingredients = kebab.Ingredients.Select(ingredient => _kebabIngredientMapper.Map(ingredient)).ToList(),
             TotalWeight = kebab.TotalWeight,
             TotalCalories = kebab.TotalCalories,
             TotalCarbs = kebab.TotalCarbs,
             TotalFat = kebab.TotalFat,
-            TotalProtein = kebab.TotalProtein,
+            TotalProtein = kebab.TotalProtein
         };
     }
-
     public Kebab Map(KebabDto kebabDto)
     {
-        var ingredients = kebabDto.Ingredients.Select(dto => Ingredient.Create(
-            dto.Id,
-            dto.IngredientName,
-            dto.CaloriesPer100g,
-            dto.ProteinPer100g,
-            dto.FatPer100g,
-            dto.CarbsPer100g,
-            dto.SugarPer100g ?? 0,
-            dto.ContainsLactose ?? false
-        ).Value).ToList();
-
+        var ingredients = kebabDto.Ingredients.Select(dto => _kebabIngredientMapper.Map(dto)).ToList();
         return Kebab.Create(
             kebabDto.Id,
             kebabDto.KebabName,
@@ -60,9 +45,9 @@ public class KebabDtoMapper : IMapper<Kebab, KebabDto>, IMapper<KebabDto, Kebab>
             kebabDto.Wrap,
             kebabDto.IsAvailable,
             Image.Create(kebabDto.TitleImage.FileName, kebabDto.TitleImage.Path).Value,
-            ingredients,
-            new NutritionAndWeightCalculatorService(),
+            ingredients.Select(i => i.Ingredient).ToList(), // Передача только ингредиентов в Kebab
+            new NutritionAndWeightCalculatorService(), // Вставьте ваш сервис расчета
             kebabDto.Ingredients.Select(i => i.Weight).ToList()
-        ).Value;
+            ).Value;
     }
 }
