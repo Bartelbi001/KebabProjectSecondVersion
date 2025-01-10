@@ -1,4 +1,6 @@
-﻿namespace KebabStoreGen2.DataAccess.Entities;
+﻿using KebabStoreGen2.DataAccess.LinkingModels;
+
+namespace KebabStoreGen2.DataAccess.Entities;
 
 public class IngredientEntity
 {

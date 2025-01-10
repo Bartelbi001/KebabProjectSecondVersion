@@ -1,4 +1,5 @@
 ﻿using KebabStoreGen2.Core.Models.Enums;
+using KebabStoreGen2.DataAccess.LinkingModels;
 
 namespace KebabStoreGen2.DataAccess.Entities;
 
