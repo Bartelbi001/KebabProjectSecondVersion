@@ -1,6 +1,6 @@
 ﻿using KebabStoreGen2.DataAccess.Entities;
 
-namespace KebabStoreGen2.Core.Models.LinkingModels;
+namespace KebabStoreGen2.DataAccess.LinkingModels;
 
 public class KebabIngredient
 {
